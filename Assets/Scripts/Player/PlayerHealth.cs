@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHealth = 100;
 
@@ -17,7 +17,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if(dash!= null && dash.IsInvulnerable)
         {
-            // El jugador es invulnerable durante el dash, no recibe daño
+        
             return;
         }
         currentHealth -= amount;
