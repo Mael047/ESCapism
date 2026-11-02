@@ -1,45 +1,57 @@
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Un cliente. Va en la RA�Z del prefab de cada cliente (una Image del Canvas con su dibujo).
-/// El CustomerManager crea uno al azar, le da paciencia y lo destruye cuando se va.
-/// Como la barra es hija del prefab, cada cliente nuevo trae su barra llena.
+/// Un cliente. Va en la RAÍZ del prefab del NPC, junto a NPCAppearance y CustomerPersonality.
+/// - Su paciencia baja con el tiempo; cuánta tiene depende de sus productos y de su personalidad.
+/// - Su cara (NPCAppearance) cambia sola: Feliz → Serio → Enojado según la paciencia.
+/// - La barra y el globo pueden venir en el prefab o ser de la escena (los pasa el CustomerManager).
 /// </summary>
 public class Customer : MonoBehaviour
 {
-    [Header("Partes del prefab")]
-    [Tooltip("Image hija con Image Type = Filled. Es la barra de paciencia.")]
+    [Header("Interfaz (opcional: si se deja vacía, usa la de la escena)")]
+    [Tooltip("Image con Image Type = Filled. Es la barra de paciencia.")]
     public Image barraPaciencia;
 
-    [Tooltip("Color de la barra seg�n la paciencia (izquierda = 0, derecha = llena).")]
+    [Tooltip("Color de la barra según la paciencia (izquierda = 0, derecha = llena).")]
     public Gradient colorBarra = GradienteDefecto();
 
-    [Tooltip("Objeto del globo de di�logo (opcional). Se oculta cuando no hay mensaje.")]
+    [Tooltip("Objeto del globo de diálogo. Se oculta cuando no hay mensaje.")]
     public GameObject globo;
 
-    [Tooltip("Texto TMP dentro del globo (opcional).")]
+    [Tooltip("Texto TMP dentro del globo.")]
     public TMP_Text globoTexto;
 
-    [Header("Personalidad")]
-    [Tooltip("1 = normal, 1.5 = muy paciente, 0.7 = apurado. As� cada prefab se siente distinto.")]
-    [Min(0.1f)] public float multiplicadorPaciencia = 1f;
+    [Header("Ánimo (expresión de la cara)")]
+    [Tooltip("Si se deja vacío, busca NPCAppearance en este mismo objeto.")]
+    public NPCAppearance apariencia;
+
+    [Tooltip("Por debajo de esta paciencia (0-1) se pone serio.")]
+    [Range(0f, 1f)] public float umbralSerio = 0.6f;
+
+    [Tooltip("Por debajo de esta paciencia (0-1) se enoja.")]
+    [Range(0f, 1f)] public float umbralEnojado = 0.3f;
 
     [Header("Dificultad")]
-    [Tooltip("Velocidad a la que baja la paciencia. 1 = normal, 1.5 = 50% m�s r�pido.")]
+    [Tooltip("Velocidad a la que baja la paciencia. 1 = normal, 1.5 = 50% más rápido.")]
     public float velocidad = 1f;
 
+    public CustomerPersonality Personalidad { get; private set; }
     public float PacienciaMax { get; private set; }
     public float Paciencia { get; private set; }
     public float Paciencia01 => PacienciaMax > 0f ? Paciencia / PacienciaMax : 0f;
-    /// <summary>True mientras la paciencia est� corriendo.</summary>
+    /// <summary>True mientras la paciencia está corriendo.</summary>
     public bool Esperando { get; private set; }
 
     public event Action OnPacienciaAgotada;
 
-    void Awake() => Decir("");
+    void Awake()
+    {
+        if (apariencia == null) apariencia = GetComponent<NPCAppearance>();
+        Personalidad = GetComponent<CustomerPersonality>();
+    }
 
     void Update()
     {
@@ -49,13 +61,27 @@ public class Customer : MonoBehaviour
         RevisarPaciencia();
     }
 
-    /// <summary>El cliente llega con 'segundos' de paciencia (antes de su multiplicador).</summary>
+    /// <summary>Usa la barra y el globo de la escena para lo que el prefab no traiga.</summary>
+    public void UsarInterfaz(Image barra, GameObject globoEscena, TMP_Text textoEscena)
+    {
+        if (barraPaciencia == null) barraPaciencia = barra;
+        if (globo == null) globo = globoEscena;
+        if (globoTexto == null) globoTexto = textoEscena;
+    }
+
+    /// <summary>El cliente llega con 'segundos' de paciencia (antes de su personalidad).</summary>
     public void Llegar(float segundos)
     {
-        PacienciaMax = Mathf.Max(1f, segundos * multiplicadorPaciencia);
+        float multiplicador = Personalidad != null ? Personalidad.MultiplicadorPaciencia : 1f;
+        PacienciaMax = Mathf.Max(1f, segundos * multiplicador);
         Paciencia = PacienciaMax;
         Esperando = true;
+
+        if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(true);
         ActualizarBarra();
+        ActualizarAnimo();
+
+        Decir(Personalidad != null ? Personalidad.Saludo : "");
     }
 
     /// <summary>Resta paciencia (por ejemplo, por un cambio mal dado).</summary>
@@ -67,13 +93,27 @@ public class Customer : MonoBehaviour
         RevisarPaciencia();
     }
 
-    /// <summary>Deja de perder paciencia (ya termin�), pero sigue en pantalla.</summary>
+    /// <summary>Deja de perder paciencia (ya terminó), pero sigue en pantalla.</summary>
     public void Detener() => Esperando = false;
 
-    /// <summary>El cliente se va: se destruye.</summary>
+    /// <summary>Se va contento: la cara mejora un nivel.</summary>
+    public void Alegrarse()
+    {
+        if (apariencia != null) apariencia.ImproveMood();
+    }
+
+    /// <summary>Se va molesto: cara enojada.</summary>
+    public void Enojarse()
+    {
+        if (apariencia != null) apariencia.SetMood(Mood.Angry);
+    }
+
+    /// <summary>El cliente se va: oculta la interfaz y se destruye.</summary>
     public void Irse()
     {
         Esperando = false;
+        if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
+        Decir("");
         Destroy(gameObject);
     }
 
@@ -88,6 +128,7 @@ public class Customer : MonoBehaviour
     {
         Paciencia = Mathf.Max(0f, Paciencia);
         ActualizarBarra();
+        ActualizarAnimo();
 
         if (Paciencia <= 0f && Esperando)
         {
@@ -102,6 +143,17 @@ public class Customer : MonoBehaviour
 
         barraPaciencia.fillAmount = Paciencia01;
         barraPaciencia.color = colorBarra.Evaluate(Paciencia01);
+    }
+
+    void ActualizarAnimo()
+    {
+        if (apariencia == null) return;
+
+        Mood animo = Paciencia01 <= umbralEnojado ? Mood.Angry
+                   : Paciencia01 <= umbralSerio ? Mood.Serious
+                   : Mood.Happy;
+
+        if (animo != apariencia.CurrentMood) apariencia.SetMood(animo);
     }
 
     static Gradient GradienteDefecto()
