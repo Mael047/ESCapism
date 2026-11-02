@@ -21,6 +21,12 @@ public class Product : MonoBehaviour
     [Tooltip("Escala el sprite para que mida exactamente las celdas que ocupa en la grilla.")]
     public bool ajustarTamanoACelda = true;
 
+    [Tooltip("Escala la imagen sin deformarla: cabe dentro de sus casillas manteniendo su proporción.")]
+    public bool mantenerProporcion = true;
+
+    [Tooltip("Espacio libre alrededor de la imagen dentro de sus casillas (0.08 = 8%).")]
+    [Range(0f, 0.4f)] public float margen = 0.08f;
+
     SpriteRenderer spriteRenderer;
 
     // Forma actual (cambia al rotar), normalizada para que la celda mínima sea (0,0)
@@ -87,8 +93,15 @@ public class Product : MonoBehaviour
         if (!ajustarTamanoACelda || spriteRenderer == null || spriteRenderer.sprite == null) return;
 
         Vector2 tamSprite = spriteRenderer.sprite.bounds.size;
-        Vector2 objetivo = (Vector2)Tamano * tamanoCelda;
-        transform.localScale = new Vector3(objetivo.x / tamSprite.x, objetivo.y / tamSprite.y, 1f);
+        Vector2 objetivo = (Vector2)Tamano * tamanoCelda * (1f - margen);
+
+        float escalaX = objetivo.x / tamSprite.x;
+        float escalaY = objetivo.y / tamSprite.y;
+
+        // Misma escala en X e Y = la imagen no se estira ni se aplasta
+        if (mantenerProporcion) escalaX = escalaY = Mathf.Min(escalaX, escalaY);
+
+        transform.localScale = new Vector3(escalaX, escalaY, 1f);
     }
 
     /// <summary>Rota 90° antihorario la forma y el visual.</summary>
