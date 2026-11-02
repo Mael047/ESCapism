@@ -7,15 +7,19 @@ public class DamageZone : MonoBehaviour
 
     private float nextDamageTime;
 
+
     private void OnTriggerStay(Collider other)
     {
         if (Time.time < nextDamageTime) return;
 
         IDamageable target = other.GetComponentInParent<IDamageable>();
-        if (target != null)
+        if (target == null)
         {
-            target.TakeDamage(damage);
             nextDamageTime = Time.time + interval;
+            return;
         }
+
+        target.TakeDamage(damage);
+        nextDamageTime = Time.time + interval;
     }
 }

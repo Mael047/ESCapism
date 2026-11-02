@@ -9823,9 +9823,10 @@ GameObject:
   - component: {fileID: 4907745679641805843}
   - component: {fileID: 7081844404148209060}
   - component: {fileID: 7125815173222601591}
+  - component: {fileID: 6850081240157686677}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10003,7 +10004,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cooldown: 0.5
-  iFrameStart: 0.2
+  iFrameStart: 0.08
   iFrameEnd: 0.8
   attackCancelPoint: 0.5
   dashTrail: {fileID: 129028504549813843}
@@ -10025,15 +10026,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  leftFoot: {fileID: 0}
-  rightFoot: {fileID: 0}
-  leftToe: {fileID: 0}
-  rightToe: {fileID: 0}
-  contactHeight: 0.05
-  liftHeight: 0.12
-  minTimeBetweenPrints: 0.12
-  forwardShift: 0.1
-  invertDirection: 0
   leftHeightDebug: 0
   rightHeightDebug: 0
   strideDistance: 0.8
@@ -10045,6 +10037,19 @@ MonoBehaviour:
   color: {r: 1, g: 0.5, b: 0.75, a: 1}
   glow: 1.5
   poolSize: 24
+--- !u!114 &6850081240157686677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216385298183538142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72076391fa15eb8479b77fc6ca6e72a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 100
 --- !u!1001 &484323492693377690
 PrefabInstance:
   m_ObjectHideFlags: 0
