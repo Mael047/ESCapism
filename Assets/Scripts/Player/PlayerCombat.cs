@@ -26,6 +26,9 @@ public class PlayerCombat : MonoBehaviour
     private float attackTimer;
     private bool nextQueued;
     private float combatTimer;
+    private Player player;
+    public Vector3 AttackDirection { get; private set; }
+
 
     public bool IsAttacking => comboIndex >= 0;
     public bool InCombat => combatTimer > 0f;
@@ -35,6 +38,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         attackAction = InputSystem.actions.FindAction("Attack");
     }
 
@@ -69,7 +73,7 @@ public class PlayerCombat : MonoBehaviour
         float t = attackTimer / CurrentAttack.Duration;
 
         float speed = CurrentAttack.moveCurve.Evaluate(t) * CurrentAttack.moveSpeed;
-        AttackVelocity = transform.forward * speed;
+        AttackVelocity = AttackDirection * speed;
 
         bool hasNext = comboIndex < combo.Length - 1;
         if(nextQueued && hasNext && t >= CurrentAttack.cancelPoint)
@@ -90,7 +94,8 @@ public class PlayerCombat : MonoBehaviour
         attackTimer = 0f;
         nextQueued = false;
         DeactivateAllHitboxes();
-
+        Vector3 inputDirection = player.GetInputDirection();
+        AttackDirection = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : transform.forward;
         animator.CrossFadeInFixedTime(CurrentAttack.stateName, CurrentAttack.transitionDuration);
         EnterCombat();
     }
