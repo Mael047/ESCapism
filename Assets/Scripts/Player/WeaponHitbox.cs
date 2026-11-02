@@ -11,6 +11,9 @@ public class WeaponHitbox : MonoBehaviour
     [Tooltip("Revisiones por frame. Más revisiones = mayor precisión, pero más consumo de recursos")]
     [SerializeField] private int substeps = 4;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject hitVFX;
+
     private bool isActive;
     private int damage;
     private Vector3 previousPosition;
@@ -52,6 +55,7 @@ public class WeaponHitbox : MonoBehaviour
                 if (target != null && hitThisSwing.Add(target))
                 {
                     target.TakeDamage(damage);
+                    SpawnHitVFX(hit, position);
                 }
             }
         }
@@ -59,6 +63,20 @@ public class WeaponHitbox : MonoBehaviour
         previousPosition = transform.position;
         previousRotation = transform.rotation;
 
+    }
+
+    private void SpawnHitVFX(Collider target, Vector3 hitboxPosition)
+    {
+        if(hitVFX == null) return;
+
+        Vector3 hitPoint = target.ClosestPoint(hitboxPosition);
+
+        Vector3 swingDirection = transform.position - previousPosition;
+        if (swingDirection.sqrMagnitude < 0.001f)
+        {
+            swingDirection = transform.forward;
+        }
+        Instantiate(hitVFX, hitPoint, Quaternion.LookRotation(swingDirection.normalized));
     }
 
     private void OnDrawGizmos()

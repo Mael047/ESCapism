@@ -1,26 +1,33 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using static Unity.Burst.Intrinsics.X86;
 
 public class PlayerCombat : MonoBehaviour
 {
     [Header("Referencias")]
     [SerializeField] private Animator animator;
-
+    ///
     [Header("Combo")]
     [SerializeField] private AttackData[] combo;
     [SerializeField] private string locomotionState = "Locomotion";
     [SerializeField] private float returnTransition = 0.15f;
- 
+    //
     [Header("Estado de Combate")]
     [SerializeField] private float combatDuration = 5f; // Segundos para pasar de IdleCombat a Idle
     [SerializeField] private float combatBlendTime = 0.3f;
-
+    //
     [Header("Referencia al Hitbox del arma")]
     [SerializeField] private WeaponHitbox[] hitboxes;
-
+    //
     [Header("VFX")]
     [SerializeField] private TrailRenderer weaponTrail;
+    //
+    [Header("Onda Expansiva")]
+    [SerializeField] private Shockwave shockwavePrefab;
+    [SerializeField] private Transform slamPoint;
+    [SerializeField] private LayerMask groundLayer;
+    //
 
     private static readonly int CombatHash = Animator.StringToHash("Combat");
 
@@ -160,6 +167,23 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!IsAttacking) return;
         weaponTrail.emitting = false;
+    }
+
+    public void SpawnShockwave()
+    {
+
+        if (!IsAttacking || shockwavePrefab == null) return;
+
+        Vector3 origin = slamPoint.position + Vector3.up;
+        Vector3 spawnPoint = slamPoint.position;
+
+        if(Physics.Raycast(origin, Vector3.down, out RaycastHit groundHit, 3f, groundLayer))
+        {
+            spawnPoint = groundHit.point;
+        }
+        Shockwave wave = Instantiate(shockwavePrefab, spawnPoint, Quaternion.identity);
+        wave.Initialize(CurrentAttack.shockwaveDamage);
+
     }
 
 }

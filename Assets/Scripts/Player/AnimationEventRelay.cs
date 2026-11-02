@@ -15,4 +15,6 @@ public class AnimationEventRelay : MonoBehaviour
     public void HitboxOff(int index) => combat.HitboxOff(index);
     public void TrailOn() => combat.TrailOn();
     public void TrailOff() => combat.TrailOff();
+    public void Shockwave() => combat.SpawnShockwave();
+
 }
