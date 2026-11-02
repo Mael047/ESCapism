@@ -305,10 +305,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProductSpawner
   prefabs:
   - {fileID: 1070966983711363985, guid: dcbba8017fd35ae4192e92f5cacd9c89, type: 3}
-  - {fileID: 1070966983711363985, guid: dcbba8017fd35ae4192e92f5cacd9c89, type: 3}
-  - {fileID: 1070966983711363985, guid: dcbba8017fd35ae4192e92f5cacd9c89, type: 3}
-  - {fileID: 1070966983711363985, guid: dcbba8017fd35ae4192e92f5cacd9c89, type: 3}
-  - {fileID: 1070966983711363985, guid: dcbba8017fd35ae4192e92f5cacd9c89, type: 3}
+  - {fileID: 1070966983711363985, guid: 5ebf1d2d63a8e2b4f93c8cca67513449, type: 3}
+  - {fileID: 1070966983711363985, guid: b6619e3900055dd4a871971d30c114d8, type: 3}
+  - {fileID: 1070966983711363985, guid: 87c37f52dfef7b54e92bde081d11ef3e, type: 3}
+  - {fileID: 1070966983711363985, guid: 90e68a8489bc31a4ca831d8a89f198bd, type: 3}
+  - {fileID: 1070966983711363985, guid: d70f75c029f42de4ea1eb9bb836a2024, type: 3}
+  - {fileID: 1070966983711363985, guid: 2f1754b60a68a9741b6fc6f398f084b4, type: 3}
+  - {fileID: 1070966983711363985, guid: 62fe0afef7d7fef41b4bb01ea42ea4e1, type: 3}
+  - {fileID: 1070966983711363985, guid: bbd56a91718a130439a58213066c4507, type: 3}
+  - {fileID: 1070966983711363985, guid: c53f6f13477cd4c4f9c2dfec01362d69, type: 3}
+  - {fileID: 1070966983711363985, guid: 0073780f361294740b7ac47e7c2053db, type: 3}
   puntoInicio: {fileID: 1596009229}
   direccion: 1
   espacioEntreProductos: 0.2
@@ -970,8 +976,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -391.26666}
-  m_SizeDelta: {x: 0, y: -782.5333}
+  m_AnchoredPosition: {x: 0, y: -373.76}
+  m_SizeDelta: {x: 0, y: -747.52}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &483838899
 MonoBehaviour:

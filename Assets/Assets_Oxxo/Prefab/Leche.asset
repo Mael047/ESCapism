@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c749642deb5ff4bab0623aed36d546, type: 3}
   m_Name: Leche
   m_EditorClassIdentifier: Assembly-CSharp::ProductData
-  nombre: Producto
-  precio: 1000
+  nombre: Leche
+  precio: 155
   forma:
-  - {x: 3, y: 7}
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
