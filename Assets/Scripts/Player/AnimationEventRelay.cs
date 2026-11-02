@@ -13,4 +13,6 @@ public class AnimationEventRelay : MonoBehaviour
 
     public void HitboxOn(int index) => combat.HitboxOn(index);
     public void HitboxOff(int index) => combat.HitboxOff(index);
+    public void TrailOn() => combat.TrailOn();
+    public void TrailOff() => combat.TrailOff();
 }

@@ -19,6 +19,9 @@ public class PlayerCombat : MonoBehaviour
     [Header("Referencia al Hitbox del arma")]
     [SerializeField] private WeaponHitbox[] hitboxes;
 
+    [Header("VFX")]
+    [SerializeField] private TrailRenderer weaponTrail;
+
     private static readonly int CombatHash = Animator.StringToHash("Combat");
 
     private InputAction attackAction;
@@ -119,6 +122,7 @@ public class PlayerCombat : MonoBehaviour
         attackTimer = 0f;
         nextQueued = false;
         AttackVelocity = Vector3.zero;
+        if(weaponTrail != null) weaponTrail.emitting = false;
         DeactivateAllHitboxes();
     }
 
@@ -146,5 +150,16 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    public void TrailOn()
+    {
+        if (!IsAttacking) return;
+        weaponTrail.emitting = true;
+    }
+
+    public void TrailOff()
+    {
+        if (!IsAttacking) return;
+        weaponTrail.emitting = false;
+    }
 
 }
