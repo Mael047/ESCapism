@@ -599,6 +599,11 @@ MonoBehaviour:
   hitboxes:
   - {fileID: 6757555066668069873}
   weaponTrail: {fileID: 8377095246291329337}
+  shockwavePrefab: {fileID: 166885328697384546, guid: 2043188e2c8f9094c90efc7dcfcbf912, type: 3}
+  slamPoint: {fileID: 171471281630196925}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1001 &484323492693377690
 PrefabInstance:
   m_ObjectHideFlags: 0
