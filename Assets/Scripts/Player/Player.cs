@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     [Header("Animación")]
     [SerializeField] private Animator animator;
     [SerializeField] private PlayerCombat combat;
+    [SerializeField] private PlayerDash dash;
 
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
 
@@ -42,7 +43,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //Por si esta atacando, no se puede mover
-        moveInput = combat.IsAttacking ? Vector2.zero : moveAction.ReadValue<Vector2>();
+        moveInput = (combat.IsAttacking || dash.IsDashing) ? Vector2.zero : moveAction.ReadValue<Vector2>();
 
         //Normalizar la entrada del movimiento para las animaciones, lo máximo es 1
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -54,8 +55,13 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 move;
-
-        if (combat.IsAttacking)
+        if(dash.IsDashing)
+        {
+            // Durante el dash: el dash decide movimiento y orientación
+            move = dash.Dashvelocity;
+            RotateTowards(dash.DashDirection, 50f);
+        }
+        else if (combat.IsAttacking)
         {
             // Durante el ataque: el combate decide movimiento y orientación
             move = combat.AttackVelocity;
@@ -66,7 +72,7 @@ public class Player : MonoBehaviour
             move = CameraRelative(moveInput) * moveSpeed;
             RotateTowards(move, rotationSpeed);
         }
-
+        
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }
 
