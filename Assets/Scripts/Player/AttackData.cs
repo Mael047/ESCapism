@@ -21,5 +21,8 @@ public class AttackData : ScriptableObject
     public float moveSpeed = 0f;
     public AnimationCurve moveCurve = AnimationCurve.Constant(0f, 1f, 0f);
 
+    [Header("Onda Expansiva")]
+    public int shockwaveDamage = 15;
+
     public float Duration => clip != null ? clip.length : 1f;
 }

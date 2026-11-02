@@ -444,7 +444,7 @@ Transform:
   m_GameObject: {fileID: 8998179484279299074}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.25, z: 0}
+  m_LocalPosition: {x: 0, y: 1.57, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -462,11 +462,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56827905e2dc654c996c278b4839fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponHitbox
-  size: {x: 2.87, y: 2.15, z: 2.14}
+  size: {x: 2.87, y: 3.56, z: 2.14}
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
   substeps: 4
+  hitVFX: {fileID: 3810400584096528044, guid: 0a436cea14df70241841d2391760a37c, type: 3}
 --- !u!1 &9216385298183538142
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,7 +555,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &2827341191221071674
 MonoBehaviour:
