@@ -28,6 +28,12 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private Transform slamPoint;
     [SerializeField] private LayerMask groundLayer;
     //
+    [Header("Ataque de dash")]
+    [SerializeField] private AttackData dashAttack;
+    [SerializeField] private int dashAttackComboIndex = 1;
+
+    private AttackData currentAttack;
+    private static readonly int AttackSpeedHash = Animator.StringToHash("AttackSpeed");
 
     private static readonly int CombatHash = Animator.StringToHash("Combat");
 
@@ -37,19 +43,22 @@ public class PlayerCombat : MonoBehaviour
     private bool nextQueued;
     private float combatTimer;
     private Player player;
+    private PlayerDash dash;
     public Vector3 AttackDirection { get; private set; }
+
 
 
     public bool IsAttacking => comboIndex >= 0;
     public bool InCombat => combatTimer > 0f;
     public Vector3 AttackVelocity { get; private set; }
 
-    private AttackData CurrentAttack => combo[comboIndex];
+    private AttackData CurrentAttack => currentAttack;
 
     private void Awake()
     {
         player = GetComponent<Player>();
         attackAction = InputSystem.actions.FindAction("Attack");
+        dash = GetComponent<PlayerDash>();
     }
 
     private void OnEnable() => attackAction.Enable();
@@ -57,17 +66,23 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        if(attackAction.WasPressedThisFrame())
-        {
-            if (!IsAttacking) StartAttack(0);
-            else nextQueued = true;
-        }
+        bool attackPressed = attackAction.WasPressedThisFrame();
 
-        if(IsAttacking)
+        if (dash.IsDashing)
         {
-            UpdateAttack();
+            if (attackPressed) dash.QueueAttack();
         }
-        else if(combatTimer > 0f)
+        else
+        {
+            if (attackPressed)
+            {
+                if (!IsAttacking) StartAttack(0);
+                else nextQueued = true;
+            }
+
+            if(IsAttacking) UpdateAttack();
+        }
+        if(!IsAttacking && combatTimer > 0f)
         {
             combatTimer -= Time.deltaTime;
         }
@@ -100,14 +115,26 @@ public class PlayerCombat : MonoBehaviour
 
     private void StartAttack(int index)
     {
+        StartAttack(combo[index], index);
+    }
+    private void StartAttack(AttackData data, int index)
+    {
         comboIndex = index;
+        currentAttack = data;
         attackTimer = 0f;
         nextQueued = false;
         DeactivateAllHitboxes();
+
         Vector3 inputDirection = player.GetInputDirection();
         AttackDirection = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : transform.forward;
+        animator.SetFloat(AttackSpeedHash, data.animationSpeed);
         animator.CrossFadeInFixedTime(CurrentAttack.stateName, CurrentAttack.transitionDuration);
         EnterCombat();
+    }
+    public void StartDashAttack()
+    {
+        if(dashAttack == null) return;
+        StartAttack(dashAttack, dashAttackComboIndex);
     }
 
     private void EndCombo()

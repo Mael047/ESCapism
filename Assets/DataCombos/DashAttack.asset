@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 305c9e5a5e7ebd74bacf84d5a9026ec1, type: 3}
+  m_Name: DashAttack
+  m_EditorClassIdentifier: Assembly-CSharp::AttackData
+  stateName: Attack2
+  clip: {fileID: 870077508699285806, guid: 647d25a637b105444b9c4f342ccc3a5f, type: 3}
+  transitionDuration: 0.1
+  damage: 15
+  cancelPoint: 0.695
+  exitPoint: 0.9
+  moveSpeed: 8
+  moveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.0005493
+      inSlope: -0.48390198
+      outSlope: -0.48390198
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.51664734
+      inSlope: -0.48390198
+      outSlope: -0.48390198
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shockwaveDamage: 15
+  animationSpeed: 1.8

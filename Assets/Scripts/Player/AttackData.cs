@@ -24,5 +24,7 @@ public class AttackData : ScriptableObject
     [Header("Onda Expansiva")]
     public int shockwaveDamage = 15;
 
-    public float Duration => clip != null ? clip.length : 1f;
+    [Min(0.1f)] public float animationSpeed = 1f;
+
+    public float Duration => clip != null ? clip.length / animationSpeed : 1f;
 }
