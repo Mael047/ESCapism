@@ -1,0 +1,145 @@
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.InputSystem;
+
+public class PlayerCombat : MonoBehaviour
+{
+    [Header("Referencias")]
+    [SerializeField] private Animator animator;
+
+    [Header("Combo")]
+    [SerializeField] private AttackData[] combo;
+    [SerializeField] private string locomotionState = "Locomotion";
+    [SerializeField] private float returnTransition = 0.15f;
+ 
+    [Header("Estado de Combate")]
+    [SerializeField] private float combatDuration = 5f; // Segundos para pasar de IdleCombat a Idle
+    [SerializeField] private float combatBlendTime = 0.3f;
+
+    [Header("Referencia al Hitbox del arma")]
+    [SerializeField] private WeaponHitbox[] hitboxes;
+
+    private static readonly int CombatHash = Animator.StringToHash("Combat");
+
+    private InputAction attackAction;
+    private int comboIndex = -1;
+    private float attackTimer;
+    private bool nextQueued;
+    private float combatTimer;
+
+    public bool IsAttacking => comboIndex >= 0;
+    public bool InCombat => combatTimer > 0f;
+    public Vector3 AttackVelocity { get; private set; }
+
+    private AttackData CurrentAttack => combo[comboIndex];
+
+    private void Awake()
+    {
+        attackAction = InputSystem.actions.FindAction("Attack");
+    }
+
+    private void OnEnable() => attackAction.Enable();
+    private void OnDisable() => attackAction.Disable();
+
+    private void Update()
+    {
+        if(attackAction.WasPressedThisFrame())
+        {
+            if (!IsAttacking) StartAttack(0);
+            else nextQueued = true;
+        }
+
+        if(IsAttacking)
+        {
+            UpdateAttack();
+        }
+        else if(combatTimer > 0f)
+        {
+            combatTimer -= Time.deltaTime;
+        }
+
+        //1 en combate, 0 fuera de combate
+        float combatTarget = InCombat ? 1f : 0f;
+        animator.SetFloat(CombatHash, combatTarget, combatBlendTime, Time.deltaTime);
+    }
+
+    private void UpdateAttack()
+    {
+        attackTimer += Time.deltaTime;
+        float t = attackTimer / CurrentAttack.Duration;
+
+        float speed = CurrentAttack.moveCurve.Evaluate(t) * CurrentAttack.moveSpeed;
+        AttackVelocity = transform.forward * speed;
+
+        bool hasNext = comboIndex < combo.Length - 1;
+        if(nextQueued && hasNext && t >= CurrentAttack.cancelPoint)
+        {
+            StartAttack(comboIndex + 1);
+            return;
+        }
+
+        if(t >= CurrentAttack.exitPoint)
+        {
+            EndCombo();
+        }
+    }
+
+    private void StartAttack(int index)
+    {
+        comboIndex = index;
+        attackTimer = 0f;
+        nextQueued = false;
+        DeactivateAllHitboxes();
+
+        animator.CrossFadeInFixedTime(CurrentAttack.stateName, CurrentAttack.transitionDuration);
+        EnterCombat();
+    }
+
+    private void EndCombo()
+    {
+        ResetCombo();
+        animator.CrossFadeInFixedTime(locomotionState, returnTransition);
+    }
+
+    //Reinicia el contador de combate jeje
+    public void InterruptAttack()
+    {
+        ResetCombo();
+        // Aquí irá la animación de recibir golpe
+    }
+
+    private void ResetCombo()
+    {
+        comboIndex = -1;
+        attackTimer = 0f;
+        nextQueued = false;
+        AttackVelocity = Vector3.zero;
+        DeactivateAllHitboxes();
+    }
+
+    public void EnterCombat()
+    {
+        combatTimer = combatDuration;
+    }
+
+    public void HitboxOn(int index)
+    {
+        if (!IsAttacking) return;
+        hitboxes[index].Activate(CurrentAttack.damage);
+    }
+
+    public void HitboxOff(int index)
+    {
+        hitboxes[index].Deactivate();
+    }
+
+    private void DeactivateAllHitboxes()
+    {
+        foreach (WeaponHitbox hitbox in hitboxes)
+        {
+            hitbox.Deactivate();
+        }
+    }
+
+
+}
