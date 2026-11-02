@@ -246,11 +246,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!4 &644551646 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 171471281630196925, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-  m_PrefabInstance: {fileID: 6668709519530007529}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &730186082
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,18 +717,6 @@ PrefabInstance:
     - target: {fileID: 2266323844918926547, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4907745679641805843, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: slamPoint
-      value: 
-      objectReference: {fileID: 644551646}
-    - target: {fileID: 4907745679641805843, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: shockwavePrefab
-      value: 
-      objectReference: {fileID: 166885328697384546, guid: 2043188e2c8f9094c90efc7dcfcbf912, type: 3}
-    - target: {fileID: 4907745679641805843, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: groundLayer.m_Bits
-      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9216385298183538142, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
       propertyPath: m_Name
