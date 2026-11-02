@@ -13,19 +13,19 @@ public class FootprintTrail : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Modo huesos (arrastra desde rig)")]
-    [SerializeField] private Transform leftFoot;   // foot_ik.L
-    [SerializeField] private Transform rightFoot;  // foot_ik.R
-    [SerializeField] private Transform leftToe;    // toe_ik.L
-    [SerializeField] private Transform rightToe;   // toe_ik.R
+    private Transform leftFoot;   // foot_ik.L
+    private Transform rightFoot;  // foot_ik.R
+    private Transform leftToe;    // toe_ik.L
+    private Transform rightToe;   // toe_ik.R
     [Tooltip("Altura sobre el suelo por debajo de la cual el pie cuenta como apoyado")]
-    [SerializeField] private float contactHeight = 0.05f;
+    private float contactHeight = 0.05f;
     [Tooltip("Altura que debe superar el pie para considerarse levantado")]
-    [SerializeField] private float liftHeight = 0.12f;
-    [SerializeField] private float minTimeBetweenPrints = 0.12f;
+    private float liftHeight = 0.12f;
+    private float minTimeBetweenPrints = 0.12f;
     [Tooltip("Mueve la huella del talón hacia la punta (metros)")]
-    [SerializeField] private float forwardShift = 0.1f;
+    private float forwardShift = 0.1f;
     [Tooltip("Marca si las huellas salen apuntando hacia atrás")]
-    [SerializeField] private bool invertDirection = false;
+    private bool invertDirection = false;
 
     [Header("Lectura en vivo (solo mirar, para calibrar)")]
     [SerializeField] private float leftHeightDebug;
