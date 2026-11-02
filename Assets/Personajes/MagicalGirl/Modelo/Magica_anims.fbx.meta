@@ -125,6 +125,20 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
+      - time: 0.1754386
+        functionName: TrailOn
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.70467836
+        functionName: TrailOff
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -163,6 +177,20 @@ ModelImporter:
         messageOptions: 0
       - time: 0.875
         functionName: HitboxOff
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.34649122
+        functionName: TrailOn
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8888889
+        functionName: TrailOff
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -458,8 +486,29 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000u
       curves: []
       events:
+      - time: 0.12719299
+        functionName: TrailOn
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       - time: 0.5719697
         functionName: HitboxOn
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.79724836
+        functionName: Shockwave
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8115377
+        functionName: TrailOff
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -510,6 +559,20 @@ ModelImporter:
         messageOptions: 0
       - time: 0.48387098
         functionName: HitboxOff
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.1871345
+        functionName: TrailOn
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.46491227
+        functionName: TrailOff
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

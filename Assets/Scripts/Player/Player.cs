@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,24 +8,19 @@ public class Player : MonoBehaviour
 
     [Header("Referencias de Velocidad y Salto")]
     public float moveSpeed = 2f;
-    public float jumpForce = 3f;
+    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float attackTurnSpeed = 20f;
 
     [Header("Animación")]
     [SerializeField] private Animator animator;
-    private static readonly int SpeedHash = Animator.StringToHash("Speed");
-
-
-    [Header("Cámara")]
-    [SerializeField] private float rotationSpeed = 10f;
-    private Transform cam;
-
     [SerializeField] private PlayerCombat combat;
+
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
 
     //Referencias Privadas
     private Rigidbody rb;
+    private Transform cam;
     private InputAction moveAction;
-    private InputAction jumpAction;
-
     private Vector2 moveInput;
 
     private void Awake()
@@ -57,35 +53,46 @@ public class Player : MonoBehaviour
     //Fixed para la física jeje 
     private void FixedUpdate()
     {
-
-        //Movimiento 
-        Vector3 camForward = cam.forward;
-        Vector3 camRight = cam.right;
-        camForward.y = 0f;   // ignorar la inclinación de la cámara
-        camRight.y = 0f;
-        camForward.Normalize();
-        camRight.Normalize();
-
         Vector3 move;
 
         if (combat.IsAttacking)
         {
-            // Durante el ataque, el combate decide el movimiento
+            // Durante el ataque: el combate decide movimiento y orientación
             move = combat.AttackVelocity;
+            RotateTowards(combat.AttackDirection, attackTurnSpeed);
         }
         else
         {
-            move = (camForward * moveInput.y + camRight * moveInput.x) * moveSpeed;
+            move = CameraRelative(moveInput) * moveSpeed;
+            RotateTowards(move, rotationSpeed);
         }
 
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
+    }
 
-        // Solo gira libremente cuando no ataca
-        if (!combat.IsAttacking && move.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(move.x, 0f, move.z));
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime));
-        }
+    public Vector3 GetInputDirection()
+    {
+        return CameraRelative(moveAction.ReadValue<Vector2>());
+    }
+    
+    public Vector3 CameraRelative(Vector2 input)
+    {
+        Vector3 camForward = cam.forward;
+        Vector3 camRight = cam.right;
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+        return camForward * input.y + camRight * input.x;
+    }
+
+    private void RotateTowards(Vector3 direction, float speed)
+    {
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.01f) return;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, speed * Time.fixedDeltaTime));
+
     }
 
     private void OnDrawGizmos()
