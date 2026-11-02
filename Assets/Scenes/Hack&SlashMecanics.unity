@@ -4657,9 +4657,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   moveSpeed: 5
-  jumpForce: 5
-  animator: {fileID: 682226529}
   rotationSpeed: 10
+  attackTurnSpeed: 10
+  animator: {fileID: 682226529}
   combat: {fileID: 901011555}
 --- !u!114 &901011555
 MonoBehaviour:
