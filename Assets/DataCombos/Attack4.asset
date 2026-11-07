@@ -53,3 +53,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   shockwaveDamage: 40
+  animationSpeed: 1.3
