@@ -48,5 +48,5 @@ MonoBehaviour:
   alto: 3
   tamanoCelda: 1
   spriteCelda: {fileID: -8402062035726215087, guid: 0b04ed43b150900489adfe58690f6e52, type: 3}
-  colorCelda: {r: 1, g: 1, b: 1, a: 0.25}
+  colorCelda: {r: 1, g: 0.08018869, b: 0.08018869, a: 1}
   ordenCeldas: -10
