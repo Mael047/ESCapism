@@ -35,6 +35,7 @@ public class PlayerDash : MonoBehaviour
     private InputAction dashAction;
     private float timer;
     private float cooldownTimer;
+    private PlayerHealth health;
 
     public bool IsDashing { get; private set; }
     public bool IsInvulnerable { get; private set; }
@@ -46,6 +47,7 @@ public class PlayerDash : MonoBehaviour
         player = GetComponent<Player>();
         combat = GetComponent<PlayerCombat>();
         dashAction = InputSystem.actions.FindAction("Dash");
+        health = GetComponent<PlayerHealth>();
     }
 
     private void OnEnable() => dashAction.Enable();
@@ -57,7 +59,7 @@ public class PlayerDash : MonoBehaviour
         {
             cooldownTimer -= Time.deltaTime;
         }
-        if(dashAction.WasPressedThisFrame() && !IsDashing && cooldownTimer <= 0f)
+        if (dashAction.WasPressedThisFrame() && !IsDashing && cooldownTimer <= 0f && !health.IsHurt)
         {
             StartDash();
         }
@@ -124,6 +126,12 @@ public class PlayerDash : MonoBehaviour
     public void QueueAttack()
     {
         attackQueued = true;
+    }
+
+    public void InterruptDash()
+    {
+        if (!IsDashing) return;
+        EndDash(returnToLocomotion: false);
     }
 
     private void OnDrawGizmos()

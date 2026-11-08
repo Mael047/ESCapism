@@ -41,7 +41,6 @@ public class BatAI : MonoBehaviour, IAggroable
     [Header("Recibir daño")]
     [SerializeField] private float knockbackSpeed = 2f;
     [SerializeField] private float hitStunDuration = 0.5f;
-    [SerializeField] private float deathFallSpeed = 0.8f;
 
     [Header("Poise (derribo)")]
     [Tooltip("Daño seguido que aguanta antes de caer al suelo")]
@@ -111,12 +110,7 @@ public class BatAI : MonoBehaviour, IAggroable
 
     private void FixedUpdate()
     {
-        if (state == State.Dead)
-        {
-            rb.linearVelocity = Vector3.MoveTowards(
-                rb.linearVelocity, Vector3.down * deathFallSpeed, 6f * Time.fixedDeltaTime);
-            return;
-        }
+        if (state == State.Dead) return; 
         if (player == null && state != State.Idle) ChangeState(State.Idle);
 
         float dt = Time.fixedDeltaTime;
@@ -369,12 +363,9 @@ public class BatAI : MonoBehaviour, IAggroable
         ChangeState(State.Dead);
         PlayAnim("Die");
 
-        // Sale empujado hacia atrás y un poco hacia arriba
-        Vector3 away = player != null ? transform.position - player.position : -transform.forward;
-        away.y = 0f;
+        // Se queda quieto donde murió
         rb.useGravity = false;
-        rb.linearVelocity = away.normalized * 3f + Vector3.up * 1.5f;
-
+        if (!rb.isKinematic) rb.linearVelocity = Vector3.zero;
         gameObject.layer = LayerMask.NameToLayer("Default");
 
         BatVisual visual = GetComponentInChildren<BatVisual>();

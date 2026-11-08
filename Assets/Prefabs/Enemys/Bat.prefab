@@ -4655,6 +4655,7 @@ GameObject:
   - component: {fileID: 6100754868861193610}
   - component: {fileID: 2854397121011908166}
   - component: {fileID: 2526468489821994205}
+  - component: {fileID: 14369952105490840}
   m_Layer: 6
   m_Name: Bat
   m_TagString: Untagged
@@ -4778,7 +4779,6 @@ MonoBehaviour:
     m_Bits: 128
   knockbackSpeed: 4
   hitStunDuration: 0.5
-  deathFallSpeed: 0.8
   maxPoise: 25
   poiseRegenDelay: 2
   knockdownDuration: 2
@@ -4797,44 +4797,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6913777f705b242ba7ffb63bfcecb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathDissolve
-  dissolveDelay: 1.04
-  dissolveDuration: 1.5
-  shrinkCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.89001167
-      value: 0.99247915
-      inSlope: -0.048181187
-      outSlope: -0.048181187
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.11874982
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  dustPrefab: {fileID: 7742128186956933742, guid: 67e942a4e32705b46a870ececdd7bc6f, type: 3}
+  freezeDelay: 1
+  toDustDuration: 0.4
+  dissolveDuration: 3
+  dissolveMaterial: {fileID: 2100000, guid: 7904768abf78010439b598ba0babc7ad, type: 2}
+  keepOriginalTexture: 1
+  particlesPrefab: {fileID: 7742128186956933742, guid: 67e942a4e32705b46a870ececdd7bc6f, type: 3}
   particleMultiplier: 1
   meshSource: {fileID: 7444318766405213240}
+  destroyOnFinish: 1
 --- !u!114 &2526468489821994205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4849,6 +4820,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitFlash
   flashMaterial: {fileID: 2100000, guid: ced8b17f96776c7438cb2e4def2b338d, type: 2}
   flashDuration: 0.08
+--- !u!114 &14369952105490840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6179891818158252404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe14b5e4e35df0e4abcd4e7ea595833c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLoot
+  orbPrefab: {fileID: 6641666941378015483, guid: b0433a3beea26344f9cc25139eb8755e, type: 3}
+  dropChance: 0.75
+  minOrbs: 1
+  maxOrbs: 1
+  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &8253408507917140669
 GameObject:
   m_ObjectHideFlags: 0

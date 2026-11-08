@@ -54,6 +54,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   shockwaveDamage: 15
   hitShake: 0.3
-  hitStop: 0.05
+  hitStop: 0.3
   shockwaveShake: 0
   animationSpeed: 1.5

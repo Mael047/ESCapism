@@ -12,6 +12,10 @@ public class AttackData : ScriptableObject
     [Header("Daño")]
     public int damage = 10;
 
+    [Header("Mejoras")]
+    [Tooltip("Golpe final del combo: recibe el bono de Remate")]
+    public bool isFinisher;
+
     [Header("Tiempos 0 = inicio , 1 = final")]
     [Tooltip("Encadenar el siguiente golpe si hay inputs guardados")]
     [Range(0f, 1f)] public float cancelPoint = 0.5f;

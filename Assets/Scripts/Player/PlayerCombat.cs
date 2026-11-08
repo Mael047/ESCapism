@@ -45,6 +45,8 @@ public class PlayerCombat : MonoBehaviour
     private Player player;
     private PlayerDash dash;
     public Vector3 AttackDirection { get; private set; }
+    private PlayerHealth health;
+    private PlayerStats stats;
 
 
 
@@ -59,6 +61,8 @@ public class PlayerCombat : MonoBehaviour
         player = GetComponent<Player>();
         attackAction = InputSystem.actions.FindAction("Attack");
         dash = GetComponent<PlayerDash>();
+        health = GetComponent<PlayerHealth>();
+        stats = GetComponent<PlayerStats>();
     }
 
     private void OnEnable() => attackAction.Enable();
@@ -66,7 +70,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        bool attackPressed = attackAction.WasPressedThisFrame();
+        bool attackPressed = attackAction.WasPressedThisFrame() && !health.IsHurt;
 
         if (dash.IsDashing)
         {
@@ -209,7 +213,8 @@ public class PlayerCombat : MonoBehaviour
             spawnPoint = groundHit.point;
         }
         Shockwave wave = Instantiate(shockwavePrefab, spawnPoint, Quaternion.identity);
-        wave.Initialize(CurrentAttack.shockwaveDamage);
+        float multiplier = stats != null ? stats.GetDamageMultiplier(CurrentAttack.isFinisher) : 1f;
+        wave.Initialize(Mathf.RoundToInt(CurrentAttack.shockwaveDamage * multiplier));
         if (CombatFeedback.Instance != null)
         {
             CombatFeedback.Instance.Shake(CurrentAttack.shockwaveShake);

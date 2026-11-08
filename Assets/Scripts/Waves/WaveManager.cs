@@ -20,6 +20,9 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float deathDelay = 2.5f;
     [SerializeField] private float victoryDelay = 3f;
 
+    [Header("Tiendas")]
+    [SerializeField] private PermanentShopUI permanentShop;
+
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
 
@@ -34,6 +37,10 @@ public class WaveManager : MonoBehaviour
     private PlayerHealth player;
     private int pendingSpawns;
     private bool nightOver;
+    public event Action<int> EnemiesRemainingChanged;
+
+    public int TotalWaves => waves.Length;
+    public int EnemiesRemaining => AliveEnemies + pendingSpawns;
 
     private void Start()
     {
@@ -60,6 +67,14 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator RunNight(int startIndex)
     {
+        yield return null;
+
+        if (permanentShop != null)
+        {
+            permanentShop.Open();
+            while (permanentShop.IsOpen) yield return null;
+        }
+
         yield return new WaitForSeconds(firstWaveDelay);
 
         for (int i = startIndex; i < waves.Length; i++)
@@ -90,6 +105,7 @@ public class WaveManager : MonoBehaviour
         WaveData wave = waves[index];
         CurrentWave = index + 1;
         pendingSpawns = wave.TotalEnemies;
+        NotifyEnemies();
 
         if (GameManager.Instance != null)
         {
@@ -110,6 +126,7 @@ public class WaveManager : MonoBehaviour
 
                 Spawn(group.enemyPrefab);
                 pendingSpawns--;
+                NotifyEnemies();
                 yield return new WaitForSeconds(wave.spawnInterval);
             }
         }
@@ -144,6 +161,7 @@ public class WaveManager : MonoBehaviour
     private void OnEnemyDied()
     {
         AliveEnemies = Mathf.Max(0, AliveEnemies - 1);
+        NotifyEnemies();
     }
 
     private Transform PickSpawnPoint()
@@ -187,6 +205,8 @@ public class WaveManager : MonoBehaviour
             Debug.Log($"[WaveManager] Fin de la noche (murió: {playerDied}). No hay GameManager: entra desde la escena de Día para el cambio de escena.");
         }
     }
+
+    private void NotifyEnemies() => EnemiesRemainingChanged?.Invoke(EnemiesRemaining);
 
     // ---------- Debug ----------
 

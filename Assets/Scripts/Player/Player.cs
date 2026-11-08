@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,12 +21,13 @@ public class Player : MonoBehaviour
     private Transform cam;
     private InputAction moveAction;
     private Vector2 moveInput;
-
+    private PlayerHealth health;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         moveAction = InputSystem.actions.FindAction("Move");
         cam = Camera.main.transform;
+        health = GetComponent<PlayerHealth>();
     }
 
     private void Start()
@@ -43,7 +42,9 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //Por si esta atacando, no se puede mover
-        moveInput = (combat.IsAttacking || dash.IsDashing) ? Vector2.zero : moveAction.ReadValue<Vector2>();
+        moveInput = (combat.IsAttacking || dash.IsDashing || health.IsHurt)
+        ? Vector2.zero
+        : moveAction.ReadValue<Vector2>();
 
         //Normalizar la entrada del movimiento para las animaciones, lo máximo es 1
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -55,7 +56,12 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 move;
-        if(dash.IsDashing)
+        if (health.IsHurt)
+        {
+            // Durante la reacción: solo el empuje, sin girar
+            move = health.KnockbackVelocity;
+        }
+        else if (dash.IsDashing)
         {
             // Durante el dash: el dash decide movimiento y orientación
             move = dash.Dashvelocity;
