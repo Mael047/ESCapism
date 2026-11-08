@@ -119,7 +119,10 @@ public class GameManager : MonoBehaviour
         GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche");
     }
 
-
-
-
+    //Dinero de la jornada de trabajo_DIA
+    // Suma dinero a la partida (en centavos: 8474 = $84.74)
+    public void AddMoney(int amount)
+    {
+        Data.money += amount;
+    }
 }

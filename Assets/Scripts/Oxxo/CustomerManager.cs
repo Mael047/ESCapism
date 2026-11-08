@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 /// <summary>Resumen de cómo le fue al jugador con un cliente.</summary>
@@ -17,6 +18,7 @@ public struct CustomerResult
     public float ocupacionBolsas;
     public int bolsasUsadas;
     public bool seFueEnojado;
+    public Quirk rasgo;
 }
 
 /// <summary>
@@ -28,17 +30,29 @@ public struct CustomerResult
 public class CustomerManager : MonoBehaviour
 {
     [Header("Clientes (prefabs)")]
-    [Tooltip("Prefabs de clientes. Cada vez se elige uno al azar.")]
+    [Tooltip("Prefabs de clientes. Con un solo NPC randomizado basta; si hay varios, se elige uno al azar.")]
     public Customer[] prefabsClientes;
 
-    [Tooltip("Objeto del Canvas donde aparecen los clientes (detrás del mostrador).")]
-    public RectTransform puntoCliente;
+    [Tooltip("Punto donde aparece el cliente (puede ser un objeto del Canvas, como Clients_point).")]
+    public Transform puntoCliente;
+
+    [Header("Interfaz del cliente en la escena (si el prefab no la trae)")]
+    [Tooltip("Image del Canvas con Image Type = Filled.")]
+    public Image barraPaciencia;
+    [Tooltip("Globo de diálogo del Canvas.")]
+    public GameObject globo;
+    [Tooltip("Texto TMP dentro del globo.")]
+    public TMP_Text globoTexto;
 
     [Header("Referencias")]
     public ProductSpawner spawner;
     public CashRegister caja;
     public BagManager bagManager;
     public DragController dragController;
+
+    [Header("Jornada")]
+    [Tooltip("Si está activo, los clientes empiezan a llegar solos al iniciar.\nSi usas ShiftManager, él lo desactiva y controla el inicio y el final.")]
+    public bool iniciarSolo = true;
 
     [Header("Clientes")]
     [Min(1)] public int productosMin = 2;
@@ -93,6 +107,13 @@ public class CustomerManager : MonoBehaviour
     public int ClientesAtendidos { get; private set; }
     /// <summary>El cliente que se está atendiendo ahora (null entre clientes).</summary>
     public Customer ClienteActual => cliente;
+    /// <summary>True mientras llegan clientes.</summary>
+    public bool EnJornada { get; private set; }
+
+    /// <summary>Multiplica las propinas (lo controla ShiftManager según la racha).</summary>
+    public float MultiplicadorPropina { get; set; } = 1f;
+    /// <summary>Qué tan rápido baja la paciencia de los clientes nuevos (lo controla ShiftManager).</summary>
+    public float VelocidadPaciencia { get; set; } = 1f;
 
     public event Action<CustomerResult> OnClienteTerminado;
 
@@ -131,8 +152,50 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
+        // Sin cliente, la barra y el globo de la escena no se ven
+        if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
+        if (globo != null) globo.SetActive(false);
+
+        ActualizarTexto();
+        if (iniciarSolo) IniciarJornada();
+    }
+
+    // ---------- Jornada ----------
+
+    /// <summary>Reinicia los contadores y empieza a llamar clientes.</summary>
+    public void IniciarJornada()
+    {
+        StopAllCoroutines();
+        QuitarClienteActual();
+
+        VentasJornada = 0;
+        PropinasJornada = 0;
+        ClientesAtendidos = 0;
+        EnJornada = true;
+
         ActualizarTexto();
         StartCoroutine(SiguienteCliente(0.5f));
+    }
+
+    /// <summary>Corta la jornada: se va el cliente actual y se limpia todo.</summary>
+    public void TerminarJornada()
+    {
+        EnJornada = false;
+        atendiendo = false;
+        StopAllCoroutines();
+
+        QuitarClienteActual();
+        LimpiarProductos();
+        caja.NuevoCliente();
+        bagManager.ReiniciarParaNuevoCliente();
+    }
+
+    void QuitarClienteActual()
+    {
+        if (cliente == null) return;
+        cliente.OnPacienciaAgotada -= AlAgotarPaciencia;
+        cliente.Irse();
+        cliente = null;
     }
 
     // ---------- Ciclo del cliente ----------
@@ -141,6 +204,7 @@ public class CustomerManager : MonoBehaviour
     {
         atendiendo = false;
         yield return new WaitForSeconds(espera);
+        if (!EnJornada) yield break;
 
         LimpiarProductos();
         caja.NuevoCliente();
@@ -158,7 +222,22 @@ public class CustomerManager : MonoBehaviour
     void CrearCliente(int cantidadProductos)
     {
         Customer prefab = prefabsClientes[Random.Range(0, prefabsClientes.Length)];
-        cliente = Instantiate(prefab, puntoCliente, false);
+
+        if (prefab.transform is RectTransform)
+        {
+            // Cliente hecho con UI (Image): va dentro del punto del Canvas
+            cliente = Instantiate(prefab, puntoCliente, false);
+        }
+        else
+        {
+            // Cliente hecho con SpriteRenderers (NPC): va en el mundo, en la posición del punto
+            Vector3 pos = puntoCliente.position;
+            cliente = Instantiate(prefab, new Vector3(pos.x, pos.y, 0f), Quaternion.identity);
+        }
+
+        // Su apariencia y personalidad ya se randomizaron en Awake (NPCAppearance / CustomerPersonality)
+        cliente.UsarInterfaz(barraPaciencia, globo, globoTexto);
+        cliente.velocidad *= VelocidadPaciencia;
         cliente.OnPacienciaAgotada += AlAgotarPaciencia;
         cliente.Llegar(pacienciaBase + pacienciaPorProducto * cantidadProductos);
     }
@@ -189,7 +268,11 @@ public class CustomerManager : MonoBehaviour
 
         // 1) Billete: el siguiente múltiplo del billete elegido, siempre MAYOR que el total.
         //    Billete chico = cambio chico; billete grande = cambio grande.
+        var personalidad = cliente != null ? cliente.Personalidad : null;
+
         int billete = hayBilletes ? Mathf.Max(1, billetesCliente[Random.Range(0, billetesCliente.Length)]) : 100;
+        if (hayBilletes && personalidad != null && personalidad.PagaConBilleteGrande)
+            billete = Max(billetesCliente);
         int pago = (total / billete + 1) * billete;
 
         // 2) Monedas: si el cambio saldría "redondo" (solo billetes), el cliente agrega monedas.
@@ -198,9 +281,11 @@ public class CustomerManager : MonoBehaviour
         if (hayMonedas)
         {
             bool cambioRedondo = (pago - total) % billeteMinimo == 0;
-            if (cambioRedondo || Random.value < probAgregarMonedas)
+            bool monedero = personalidad != null && personalidad.PagaConMonedas;
+            if (cambioRedondo || monedero || Random.value < probAgregarMonedas)
             {
-                int cantidad = Random.Range(1, maxMonedas + 1);
+                // El que paga con monedas agrega más de lo normal
+                int cantidad = monedero ? Random.Range(maxMonedas, maxMonedas + 3) : Random.Range(1, maxMonedas + 1);
                 for (int i = 0; i < cantidad; i++) pago += MonedaAlAzar();
             }
 
@@ -218,6 +303,13 @@ public class CustomerManager : MonoBehaviour
     }
 
     int MonedaAlAzar() => Mathf.Max(1, monedasCliente[Random.Range(0, monedasCliente.Length)]);
+
+    static int Max(int[] valores)
+    {
+        int m = 1;
+        foreach (int v in valores) if (v > m) m = v;
+        return m;
+    }
 
     static int Min(int[] valores)
     {
@@ -258,6 +350,7 @@ public class CustomerManager : MonoBehaviour
     {
         if (!atendiendo) return;
 
+        cliente.Enojarse();
         cliente.Decir("¡Ya me voy!");
         Terminar(seFueEnojado: true);
     }
@@ -287,7 +380,8 @@ public class CustomerManager : MonoBehaviour
             paciencia01 = cliente.Paciencia01,
             ocupacionBolsas = bagManager.OcupacionPromedio,
             bolsasUsadas = bagManager.BolsasUsadas,
-            seFueEnojado = seFueEnojado
+            seFueEnojado = seFueEnojado,
+            rasgo = cliente.Personalidad != null ? cliente.Personalidad.Rasgo : Quirk.Ninguno
         };
 
         // Venta: solo si se completó el pago. Si diste de más, la tienda pierde ese exceso.
@@ -302,6 +396,7 @@ public class CustomerManager : MonoBehaviour
         {
             r.propina = CalcularPropina(r);
             PropinasJornada += r.propina;
+            if (r.cambioEntregado == r.cambioEsperado) cliente.Alegrarse();
             if (r.propina > 0) cliente.Decir($"¡Gracias! Propina {caja.Formatear(r.propina)}");
         }
 
@@ -319,7 +414,12 @@ public class CustomerManager : MonoBehaviour
                         : r.ocupacionBolsas >= ocupacionBonoParcial ? bonoBolsaParcial
                         : 0f;
 
-        float propina = r.total * porcentajePropina * r.paciencia01 * factorCambio * (1f + bonoBolsa);
+        // Personalidad: generoso/tacaño cambian la propina; el ordenado valora el doble la bolsa
+        var personalidad = cliente != null ? cliente.Personalidad : null;
+        float factorPersonalidad = personalidad != null ? personalidad.MultiplicadorPropina : 1f;
+        if (personalidad != null) bonoBolsa *= personalidad.MultiplicadorBonoBolsa;
+
+        float propina = r.total * porcentajePropina * r.paciencia01 * factorCambio * (1f + bonoBolsa) * factorPersonalidad * MultiplicadorPropina;
         return Mathf.RoundToInt(propina);
     }
 
