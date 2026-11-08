@@ -19,14 +19,21 @@ public class WeaponHitbox : MonoBehaviour
     private Vector3 previousPosition;
     private Quaternion previousRotation;
     private AttackData currentAttack;
+    private PlayerStats stats;
 
     private readonly HashSet<IDamageable> hitThisSwing = new HashSet<IDamageable>();
+
+    private void Awake()
+    {
+        stats = GetComponentInParent<PlayerStats>();
+    }
 
     public void Activate(AttackData attack)
     {
         isActive = true;
         currentAttack = attack;
-        damage = attack.damage;
+        float multiplier = stats != null ? stats.GetDamageMultiplier(attack.isFinisher) : 1f;
+        damage = Mathf.RoundToInt(attack.damage * multiplier);
         hitThisSwing.Clear();
         previousPosition = transform.position;
         previousRotation = transform.rotation;

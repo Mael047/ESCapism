@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
         ChangeState(GameState.NightEnd);
         Data.activeTemporaryUpgrades.Clear();
 
-        // Completó las 10 oleadas: final
+        // Completó las oleadas: final
         if (!playerDied)
         {
             EvaluateEndings(completedAllWaves: true);
