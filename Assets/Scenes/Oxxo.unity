@@ -7298,7 +7298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   dayScene: Oxxo
-  nightScene: Hack&SlashMecanics
+  nightScene: NivelHackAndSlash
   maxCycles: 2
   showDebug: 1
 --- !u!4 &1782670618
