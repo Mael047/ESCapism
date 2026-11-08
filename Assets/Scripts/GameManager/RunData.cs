@@ -11,7 +11,11 @@ public class RunData
     //Recurso de la noche(Cambiar)
     public int drop;
 
+    // Progreso de la noche
+    public int nightWaveReached;
+
     public List<string> permanentUpgrades = new List<string>();
+    public List<string> activeTemporaryUpgrades = new List<string>();
 
     public EmotionalStats emotionalStats = new EmotionalStats();
 

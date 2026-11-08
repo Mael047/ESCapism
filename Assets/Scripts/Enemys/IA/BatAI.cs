@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using UnityEngine;
 
+
 [RequireComponent(typeof(Rigidbody), typeof(EnemyHealth))]
-public class BatAI : MonoBehaviour
+public class BatAI : MonoBehaviour, IAggroable
 {
     private enum State { Idle, Orbit, Windup, Lunge, Recover, HitStun, Knockdown, Dead }
 
@@ -23,8 +25,10 @@ public class BatAI : MonoBehaviour
     [SerializeField] private float separationStrength = 3f;
 
     [Header("Ataque")]
-    [SerializeField] private float windupTime = 0.6f;
-    [SerializeField] private float lungeSpeed = 10f;
+    [Tooltip("Segundos entre el inicio de la bajada y el golpe en la animación")]
+    [SerializeField] private float lungeDuration = 0.25f;
+    [Tooltip("Por seguridad: si el evento no llega, ataca igual tras este tiempo")]
+    [SerializeField] private float maxWindupTime = 1.5f;
     [SerializeField] private float maxLungeDistance = 4f;
     [SerializeField] private float lungeOvershoot = 0.5f;
     [SerializeField] private float targetHeightOffset = 0.3f; // a qué altura del jugador apunta
@@ -33,10 +37,12 @@ public class BatAI : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private float hitRadius = 0.7f;
     [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private GameObject dealDamageVFX;
 
     [Header("Recibir daño")]
     [SerializeField] private float knockbackSpeed = 2f;
     [SerializeField] private float hitStunDuration = 0.5f;
+    [SerializeField] private float deathDestroyDelay = 3f;
 
     [Header("Poise (derribo)")]
     [Tooltip("Daño seguido que aguanta antes de caer al suelo")]
@@ -61,11 +67,14 @@ public class BatAI : MonoBehaviour
     private float orbitDirection = 1f;
     private bool hasToken;
 
+    private bool aggroLocked;
     private Vector3 lungeDirection;
     private float lungeDistanceLeft;
 
     private int poise;
     private float poiseRegenTimer;
+    private float currentLungeSpeed;
+    private bool lungeRequested;
 
     public Vector3 Velocity => rb.linearVelocity;
 
@@ -80,7 +89,7 @@ public class BatAI : MonoBehaviour
         orbitDirection = Random.value < 0.5f ? 1f : -1f;
         cooldownTimer = Random.Range(0.5f, attackCooldown);
 
-        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+        PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null) player = playerHealth.transform;
     }
 
@@ -113,7 +122,7 @@ public class BatAI : MonoBehaviour
         switch (state)
         {
             case State.Idle:
-                if (player != null && Vector3.Distance(transform.position, player.position) < detectionRadius)
+                if (player != null && (aggroLocked || Vector3.Distance(transform.position, player.position) < detectionRadius))
                 {
                     EnterOrbit();
                     break;
@@ -122,7 +131,7 @@ public class BatAI : MonoBehaviour
                 break;
 
             case State.Orbit:
-                if (Vector3.Distance(transform.position, player.position) > loseRadius)
+                if (!aggroLocked && Vector3.Distance(transform.position, player.position) > loseRadius)
                 {
                     ChangeState(State.Idle);
                     break;
@@ -134,38 +143,32 @@ public class BatAI : MonoBehaviour
                 desired = VelocityTowards(orbitPoint, flySpeed) + Separation();
 
                 // ¿Puede atacar? Necesita estar cerca, sin cooldown y con un turno libre
-                if (cooldownTimer <= 0f && HorizontalDistanceToPlayer() <= orbitRadius + 1f
-                    && EnemyAttackTokens.TryTake())
+                if (cooldownTimer <= 0f && HorizontalDistanceToPlayer() <= orbitRadius + 1f && EnemyAttackTokens.TryTake())
                 {
                     hasToken = true;
+                    lungeRequested = false;
                     ChangeState(State.Windup);
-                    PlayAnim("Windup");
+                    PlayAnim("Attack");
                 }
                 break;
 
             case State.Windup:
                 {
-                    // Retrocede y sube un poco: aviso para el jugador
+                    // Solo retrocede: la subida la hace la animación
                     Vector3 away = transform.position - player.position;
                     away.y = 0f;
-                    desired = away.normalized * 1.5f + Vector3.up * 0.8f;
+                    desired = away.normalized * 1f;
 
-                    if (stateTimer >= windupTime)
+                    if (lungeRequested || stateTimer >= maxWindupTime)
                     {
-                        Vector3 target = player.position + Vector3.up * targetHeightOffset;
-                        lungeDirection = (target - transform.position).normalized;
-                        lungeDistanceLeft = Mathf.Min(
-                            Vector3.Distance(transform.position, target) + lungeOvershoot,
-                            maxLungeDistance);
-                        ChangeState(State.Lunge);
-                        PlayAnim("Attack");
+                        StartLunge();
                     }
                     break;
                 }
 
             case State.Lunge:
-                desired = lungeDirection * lungeSpeed;
-                lungeDistanceLeft -= lungeSpeed * dt;
+                desired = lungeDirection * currentLungeSpeed;
+                lungeDistanceLeft -= currentLungeSpeed * dt;
 
                 // Se detiene al golpear o al terminar la distancia: nunca sigue derecho
                 if (TryHitPlayer() || lungeDistanceLeft <= 0f)
@@ -199,6 +202,7 @@ public class BatAI : MonoBehaviour
                 {
                     rb.useGravity = false;
                     poise = maxPoise;
+                    ReturnToIdle();
                     EnterOrbit();          // vuelve a subir volando
                 }
                 break;
@@ -283,6 +287,19 @@ public class BatAI : MonoBehaviour
             if (target != null)
             {
                 target.TakeDamage(damage);
+
+                // --- Generar partículas de impacto ---
+                if (dealDamageVFX != null)
+                {
+                    // Calcula el punto exacto del borde del collider del jugador
+                    Vector3 hitPoint = hit.ClosestPoint(transform.position);
+
+                    // Instancia las partículas apuntando hacia donde va el ataque
+                    Instantiate(dealDamageVFX, hitPoint, Quaternion.LookRotation(lungeDirection));
+                    
+                }
+                // -------------------------------------
+
                 return true;
             }
         }
@@ -335,14 +352,14 @@ public class BatAI : MonoBehaviour
             rb.useGravity = true;
             rb.linearVelocity = away * knockbackSpeed * 2f + Vector3.up * 2f;
             ChangeState(State.Knockdown);
-            PlayAnim("Knockdown");
+            if (!PlayAnim("Knockdown")) ReturnToIdle();
             return;
         }
 
         // Aturdido en el aire: empuje pequeño para que siga a tu alcance
         rb.linearVelocity = away * knockbackSpeed;
         ChangeState(State.HitStun);   // cada golpe reinicia el aturdimiento
-        PlayAnim("Hit");
+        if (!PlayAnim("Hit")) ReturnToIdle();
     }
 
     private void OnDied()
@@ -351,11 +368,14 @@ public class BatAI : MonoBehaviour
         ChangeState(State.Dead);
         PlayAnim("Die");
 
+        // Cae con la gravedad mientras se reproduce la animación
         rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.None;
         gameObject.layer = LayerMask.NameToLayer("Default");
 
-        Destroy(gameObject, 2f);
+        BatVisual visual = GetComponentInChildren<BatVisual>();
+        if (visual != null) visual.enabled = false;
+
+        Destroy(gameObject, deathDestroyDelay);
     }
 
     // ---------- Utilidades ----------
@@ -366,15 +386,48 @@ public class BatAI : MonoBehaviour
         stateTimer = 0f;
     }
 
-    private void PlayAnim(string stateName)
+    private bool PlayAnim(string stateName)
     {
-        if (animator == null) return;
+        if (animator == null) return false;
 
         int hash = Animator.StringToHash(stateName);
-        if (animator.HasState(0, hash))
-        {
-            animator.CrossFadeInFixedTime(hash, 0.1f);
-        }
+        if (!animator.HasState(0, hash)) return false;
+
+        animator.CrossFadeInFixedTime(hash, 0.1f);
+        return true;
+    }
+
+    public void OnLungeEvent()
+    {
+        if (state == State.Windup) lungeRequested = true;
+    }
+
+    private void StartLunge()
+    {
+        Vector3 target = player.position + Vector3.up * targetHeightOffset;
+        lungeDirection = (target - transform.position).normalized;
+
+        float maxDistance = Mathf.Max(maxLungeDistance, orbitRadius + 2.5f);
+        lungeDistanceLeft = Mathf.Min(
+            Vector3.Distance(transform.position, target) + lungeOvershoot,
+            maxDistance);
+
+        // Velocidad calculada para llegar justo cuando la animación golpea
+        currentLungeSpeed = lungeDistanceLeft / lungeDuration;
+
+        ChangeState(State.Lunge);
+    }
+
+    private void ReturnToIdle()
+    {
+        if (animator == null) return;
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) return;
+        animator.CrossFadeInFixedTime("Idle", 0.1f);
+    }
+
+    public void ForceAggro()
+    {
+        aggroLocked = true;
     }
 
     private void OnDrawGizmosSelected()

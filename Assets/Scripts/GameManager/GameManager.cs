@@ -55,30 +55,43 @@ public class GameManager : MonoBehaviour
         if (CurrentState != GameState.Night) return;
 
         ChangeState(GameState.NightEnd);
+        Data.activeTemporaryUpgrades.Clear();
 
-        //Para cuando hayan finales o muertes
-        if (playerDied)
+        // Completó las 10 oleadas: final
+        if (!playerDied)
         {
-            // En caso de morir
-        }
-
-        // ¿Se cerró el último ciclo?
-        if (CurrentCycle >= maxCycles)
-        {
-            EvaluateEndings();
+            EvaluateEndings(completedAllWaves: true);
             return;
         }
 
+        // Murió en el último día: final
+        if (CurrentCycle >= maxCycles)
+        {
+            EvaluateEndings(completedAllWaves: false);
+            return;
+        }
+
+        // Murió: despierta en el día siguiente
         CurrentCycle++;
         ChangeState(GameState.Day);
+        UnlockCursor();
         SceneManager.LoadScene(dayScene);
     }
 
-    private void EvaluateEndings()
+    private void EvaluateEndings(bool completedAllWaves)
     {
         ChangeState(GameState.Ending);
-        // Para definir los finales en base a las estadisticas del personaje 
-        Debug.Log("[GameManager] Fin del ciclo 2: evaluar finales");
+        UnlockCursor();
+
+        // TODO SCRUM-24: elegir el final según completedAllWaves y Data.emotionalStats
+        Debug.Log($"[GameManager] Evaluar finales. Completó todas las oleadas: {completedAllWaves}");
+    }
+
+    private void UnlockCursor()
+    {
+        // La escena de Noche bloquea el cursor; la tienda y los finales lo necesitan
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void ChangeState(GameState newState)
@@ -103,7 +116,7 @@ public class GameManager : MonoBehaviour
 
         GUI.Label(new Rect(10, 10, 400, 25), $"Ciclo: {CurrentCycle}/{maxCycles}  |  Estado: {CurrentState}");
         GUI.Label(new Rect(10, 30, 400, 25), $"Dinero: {Data.money}  |  Drops: {Data.drop}");
-        GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Sobrevivir");
+        GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche");
     }
 
 
