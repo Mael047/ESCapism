@@ -37,12 +37,11 @@ public class BatAI : MonoBehaviour, IAggroable
     [SerializeField] private int damage = 10;
     [SerializeField] private float hitRadius = 0.7f;
     [SerializeField] private LayerMask playerLayer;
-    [SerializeField] private GameObject dealDamageVFX;
 
     [Header("Recibir daño")]
     [SerializeField] private float knockbackSpeed = 2f;
     [SerializeField] private float hitStunDuration = 0.5f;
-    [SerializeField] private float deathDestroyDelay = 3f;
+    [SerializeField] private float deathFallSpeed = 0.8f;
 
     [Header("Poise (derribo)")]
     [Tooltip("Daño seguido que aguanta antes de caer al suelo")]
@@ -53,6 +52,10 @@ public class BatAI : MonoBehaviour, IAggroable
 
     [Header("Animación (opcional)")]
     [SerializeField] private Animator animator;
+
+    [Header("VFX")]
+    [SerializeField] private ParticleSystem chargeVFX;
+    [SerializeField] private ParticleSystem attackVFX;
 
     private Rigidbody rb;
     private EnemyHealth health;
@@ -108,7 +111,12 @@ public class BatAI : MonoBehaviour, IAggroable
 
     private void FixedUpdate()
     {
-        if (state == State.Dead) return;
+        if (state == State.Dead)
+        {
+            rb.linearVelocity = Vector3.MoveTowards(
+                rb.linearVelocity, Vector3.down * deathFallSpeed, 6f * Time.fixedDeltaTime);
+            return;
+        }
         if (player == null && state != State.Idle) ChangeState(State.Idle);
 
         float dt = Time.fixedDeltaTime;
@@ -149,6 +157,7 @@ public class BatAI : MonoBehaviour, IAggroable
                     lungeRequested = false;
                     ChangeState(State.Windup);
                     PlayAnim("Attack");
+                    if (chargeVFX != null) chargeVFX.Play(true);
                 }
                 break;
 
@@ -174,6 +183,7 @@ public class BatAI : MonoBehaviour, IAggroable
                 if (TryHitPlayer() || lungeDistanceLeft <= 0f)
                 {
                     rb.linearVelocity = lungeDirection * 1f;   // frena en seco
+                    StopVFX(attackVFX);
                     ChangeState(State.Recover);
                     controlVelocity = false;
                 }
@@ -287,19 +297,6 @@ public class BatAI : MonoBehaviour, IAggroable
             if (target != null)
             {
                 target.TakeDamage(damage);
-
-                // --- Generar partículas de impacto ---
-                if (dealDamageVFX != null)
-                {
-                    // Calcula el punto exacto del borde del collider del jugador
-                    Vector3 hitPoint = hit.ClosestPoint(transform.position);
-
-                    // Instancia las partículas apuntando hacia donde va el ataque
-                    Instantiate(dealDamageVFX, hitPoint, Quaternion.LookRotation(lungeDirection));
-                    
-                }
-                // -------------------------------------
-
                 return true;
             }
         }
@@ -341,6 +338,8 @@ public class BatAI : MonoBehaviour, IAggroable
 
         // Cualquier golpe interrumpe su ataque
         if (hasToken) FinishAttack();
+        StopVFX(chargeVFX);
+        StopVFX(attackVFX);
 
         Vector3 away = transform.position - player.position;
         away.y = 0f;
@@ -365,17 +364,21 @@ public class BatAI : MonoBehaviour, IAggroable
     private void OnDied()
     {
         ReleaseToken();
+        StopVFX(chargeVFX);
+        StopVFX(attackVFX);
         ChangeState(State.Dead);
         PlayAnim("Die");
 
-        // Cae con la gravedad mientras se reproduce la animación
-        rb.useGravity = true;
+        // Sale empujado hacia atrás y un poco hacia arriba
+        Vector3 away = player != null ? transform.position - player.position : -transform.forward;
+        away.y = 0f;
+        rb.useGravity = false;
+        rb.linearVelocity = away.normalized * 3f + Vector3.up * 1.5f;
+
         gameObject.layer = LayerMask.NameToLayer("Default");
 
         BatVisual visual = GetComponentInChildren<BatVisual>();
         if (visual != null) visual.enabled = false;
-
-        Destroy(gameObject, deathDestroyDelay);
     }
 
     // ---------- Utilidades ----------
@@ -416,6 +419,9 @@ public class BatAI : MonoBehaviour, IAggroable
         currentLungeSpeed = lungeDistanceLeft / lungeDuration;
 
         ChangeState(State.Lunge);
+
+        StopVFX(chargeVFX);
+        if (attackVFX != null) attackVFX.Play(true);
     }
 
     private void ReturnToIdle()
@@ -430,6 +436,11 @@ public class BatAI : MonoBehaviour, IAggroable
         aggroLocked = true;
     }
 
+    private void StopVFX(ParticleSystem vfx)
+    {
+        // Deja de emitir, pero las partículas vivas terminan su recorrido
+        if (vfx != null) vfx.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
