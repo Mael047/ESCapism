@@ -168,7 +168,7 @@ public class PlayerCombat : MonoBehaviour
     public void HitboxOn(int index)
     {
         if (!IsAttacking) return;
-        hitboxes[index].Activate(CurrentAttack.damage);
+        hitboxes[index].Activate(CurrentAttack);
     }
 
     public void HitboxOff(int index)
@@ -210,6 +210,10 @@ public class PlayerCombat : MonoBehaviour
         }
         Shockwave wave = Instantiate(shockwavePrefab, spawnPoint, Quaternion.identity);
         wave.Initialize(CurrentAttack.shockwaveDamage);
+        if (CombatFeedback.Instance != null)
+        {
+            CombatFeedback.Instance.Shake(CurrentAttack.shockwaveShake);
+        }
 
     }
 

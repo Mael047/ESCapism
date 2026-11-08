@@ -18,13 +18,15 @@ public class WeaponHitbox : MonoBehaviour
     private int damage;
     private Vector3 previousPosition;
     private Quaternion previousRotation;
+    private AttackData currentAttack;
 
     private readonly HashSet<IDamageable> hitThisSwing = new HashSet<IDamageable>();
 
-    public void Activate(int damageAmount)
+    public void Activate(AttackData attack)
     {
         isActive = true;
-        damage = damageAmount;
+        currentAttack = attack;
+        damage = attack.damage;
         hitThisSwing.Clear();
         previousPosition = transform.position;
         previousRotation = transform.rotation;
@@ -56,6 +58,11 @@ public class WeaponHitbox : MonoBehaviour
                 {
                     target.TakeDamage(damage);
                     SpawnHitVFX(hit, position);
+
+                    if (CombatFeedback.Instance != null && currentAttack != null)
+                    {
+                        CombatFeedback.Instance.Hit(currentAttack.hitShake, currentAttack.hitStop);
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ public class Shockwave : MonoBehaviour
     [Header("Daño")]
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private GameObject hitVFX;
+    [SerializeField] private float hitStopOnHit = 0.06f;
 
     private int damage;
     private float timer;
@@ -44,6 +45,10 @@ public class Shockwave : MonoBehaviour
             {
                 target.TakeDamage(damage);
                 SpawnHitVFX(hit);
+                if (alreadyHit.Count == 1 && CombatFeedback.Instance != null)
+                {
+                    CombatFeedback.Instance.HitStop(hitStopOnHit);
+                }
             }
         }
     }
