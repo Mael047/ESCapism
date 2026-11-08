@@ -213,9 +213,13 @@ public class CustomerManager : MonoBehaviour
         cambioEntregado = 0;
 
         int cantidad = Random.Range(productosMin, Mathf.Max(productosMin, productosMax) + 1);
-        productosCliente.AddRange(spawner.GenerarCliente(cantidad));
-
         CrearCliente(cantidad);
+
+        // Espera a que el cliente llegue caminando al mostrador antes de poner sus productos
+        while (cliente != null && !cliente.Llego) yield return null;
+        if (!EnJornada || cliente == null) yield break;
+
+        productosCliente.AddRange(spawner.GenerarCliente(cantidad));
         atendiendo = true;
     }
 

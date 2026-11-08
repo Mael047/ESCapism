@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 4624193927156898189}
   - component: {fileID: 2334924249000572672}
   - component: {fileID: 1325769443451651347}
+  - component: {fileID: -9183130898992702826}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
@@ -555,6 +556,26 @@ SortingGroup:
   m_SortingOrder: -150
   m_SortAtRoot: 0
   m_Sort3DAs2D: 0
+--- !u!114 &-9183130898992702826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8396916525925364320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d63242a3199d0945b545569ad12a5ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerWalk
+  ladoEntrada: 1.5
+  ladoSalida: -2
+  distancia: 10
+  velocidad: 4
+  pasosPorSegundo: 3.5
+  inclinacion: 7
+  saltito: 0.12
+  duracionFrenado: 0.2
 --- !u!1 &8424826287752215842
 GameObject:
   m_ObjectHideFlags: 0

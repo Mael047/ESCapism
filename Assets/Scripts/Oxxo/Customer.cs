@@ -39,6 +39,10 @@ public class Customer : MonoBehaviour
     public float velocidad = 1f;
 
     public CustomerPersonality Personalidad { get; private set; }
+    /// <summary>True cuando ya llegó al mostrador (terminó de entrar caminando).</summary>
+    public bool Llego { get; private set; }
+
+    CustomerWalk caminata;
     public float PacienciaMax { get; private set; }
     public float Paciencia { get; private set; }
     public float Paciencia01 => PacienciaMax > 0f ? Paciencia / PacienciaMax : 0f;
@@ -51,6 +55,7 @@ public class Customer : MonoBehaviour
     {
         if (apariencia == null) apariencia = GetComponent<NPCAppearance>();
         Personalidad = GetComponent<CustomerPersonality>();
+        caminata = GetComponent<CustomerWalk>();
     }
 
     void Update()
@@ -69,12 +74,26 @@ public class Customer : MonoBehaviour
         if (globoTexto == null) globoTexto = textoEscena;
     }
 
-    /// <summary>El cliente llega con 'segundos' de paciencia (antes de su personalidad).</summary>
+    /// <summary>
+    /// El cliente llega con 'segundos' de paciencia (antes de su personalidad).
+    /// Si tiene CustomerWalk, primero entra caminando y la paciencia empieza al llegar al mostrador.
+    /// </summary>
     public void Llegar(float segundos)
     {
         float multiplicador = Personalidad != null ? Personalidad.MultiplicadorPaciencia : 1f;
         PacienciaMax = Mathf.Max(1f, segundos * multiplicador);
         Paciencia = PacienciaMax;
+        Esperando = false;
+        Llego = false;
+        ActualizarAnimo();
+
+        if (caminata != null) caminata.Entrar(AlLlegarAlMostrador);
+        else AlLlegarAlMostrador();
+    }
+
+    void AlLlegarAlMostrador()
+    {
+        Llego = true;
         Esperando = true;
 
         if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(true);
@@ -108,13 +127,21 @@ public class Customer : MonoBehaviour
         if (apariencia != null) apariencia.SetMood(Mood.Angry);
     }
 
-    /// <summary>El cliente se va: oculta la interfaz y se destruye.</summary>
-    public void Irse()
+    /// <summary>
+    /// El cliente se va: oculta la interfaz, sale caminando (si tiene CustomerWalk) y se destruye.
+    /// Devuelve los segundos que tarda en salir.
+    /// </summary>
+    public float Irse()
     {
         Esperando = false;
         if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
         Decir("");
+
+        if (caminata != null)
+            return caminata.Salir(() => Destroy(gameObject));
+
         Destroy(gameObject);
+        return 0f;
     }
 
     public void Decir(string mensaje)
