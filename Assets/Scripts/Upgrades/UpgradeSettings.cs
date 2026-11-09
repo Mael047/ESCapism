@@ -8,7 +8,10 @@ public class UpgradeSettings : ScriptableObject
     public struct MoodBand
     {
         [Range(0, 100)] public int from;
+        [Tooltip("Rendimiento del bono de la permanente (0.8 = 80%)")]
         public float factor;
+        [Tooltip("Penalización a la estadística base (0.1 = −10%)")]
+        public float basePenalty;
     }
 
     [Header("Economía")]
@@ -19,12 +22,12 @@ public class UpgradeSettings : ScriptableObject
     [Header("Mejoras permanentes")]
     public PermanentUpgradeData[] permanents;
 
-    [Header("Estrés y depresión → rendimiento de la mejora afectada")]
+    [Header("Estrés y depresión → rendimiento y penalización base")]
     public MoodBand[] moodBands =
     {
-        new MoodBand { from = 0,  factor = 1f   },   // Calmada
-        new MoodBand { from = 30, factor = 0.8f },   // Tensa
-        new MoodBand { from = 60, factor = 0.6f }    // Estresada
+        new MoodBand { from = 0,  factor = 1f,   basePenalty = 0f   },   // Calmada
+        new MoodBand { from = 30, factor = 0.8f, basePenalty = 0.1f },   // Tensa
+        new MoodBand { from = 60, factor = 0.6f, basePenalty = 0.2f }    // Estresada
     };
 
     [Header("Mejoras temporales")]
@@ -49,21 +52,19 @@ public class UpgradeSettings : ScriptableObject
         return null;
     }
 
-    public float GetMoodFactor(int value)
+    private MoodBand GetBand(int value)
     {
-        float factor = 1f;
-        int bestFrom = -1;
-
+        MoodBand best = new MoodBand { from = -1, factor = 1f, basePenalty = 0f };
         foreach (MoodBand band in moodBands)
         {
-            if (value >= band.from && band.from > bestFrom)
-            {
-                bestFrom = band.from;
-                factor = band.factor;
-            }
+            if (value >= band.from && band.from > best.from) best = band;
         }
-        return factor;
+        return best;
     }
+
+    public float GetMoodFactor(int value) => GetBand(value).factor;
+
+    public float GetMoodBasePenalty(int value) => GetBand(value).basePenalty;
 
     public TemporaryUpgradeData GetTemporary(UpgradeCategory category, UpgradeTier tier)
     {

@@ -174,10 +174,12 @@ public class NightHUD : MonoBehaviour
         if (statsText == null || playerStats == null) return;
 
         statsText.text =
-            $"Fuerza  +{playerStats.DamageBonus * 100f:0}%\n" +
-            $"Remate  +{playerStats.FinisherBonus * 100f:0}%\n" +
-            $"Agilidad  +{(playerStats.SpeedMultiplier - 1f) * 100f:0}%\n" +
-            $"Resistencia  +{(playerStats.HealthMultiplier - 1f) * 100f:0}%";
+    $"Fuerza  {playerStats.DamageBonus * 100f:+0;-0;0}%\n" +
+    $"Remate  {playerStats.FinisherBonus * 100f:+0;-0;0}%\n" +
+    $"Agilidad  {(playerStats.SpeedMultiplier - 1f) * 100f:+0;-0;0}%\n" +
+    $"Resistencia  {(playerStats.HealthMultiplier - 1f) * 100f:+0;-0;0}%";
+        statsText.text +=
+            $"\n\n<size=80%>Estrés {PermanentUpgrades.Data.stress}  ·  Depresión {PermanentUpgrades.Data.depression}</size>";
     }
 
     private void OnHealed(int amount)

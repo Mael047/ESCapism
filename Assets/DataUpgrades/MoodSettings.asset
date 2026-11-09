@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68dd993da46e9254a95cdb4ef232e4f2, type: 3}
+  m_Name: MoodSettings
+  m_EditorClassIdentifier: Assembly-CSharp::MoodSettings
+  changeShortStress: 8
+  changeOverStress: 4
+  lowPatienceThreshold: 0.3
+  lowPatienceStress: 5
+  highPatienceThreshold: 0.6
+  highPatienceRelief: 5
+  angryCustomerDepression: 15
+  streakBrokenDepression: 5
+  perfectCustomerRelief: 5
+  streakReliefPerLevel: 2
+  noAngryCustomersRelief: 10
+  goodDayThreshold: 40
+  twoGoodDaysRelief: 20
+  threeGoodDaysRelief: 35
+  maxNightPenalty: 20

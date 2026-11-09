@@ -19,4 +19,5 @@ public class RunData
     // Estado emocional (0 a 100, se arrastra entre días)
     public int stress;
     public int depression;
+    public int goodDaysStreak;
 }
