@@ -28,6 +28,9 @@ public class WaveManager : MonoBehaviour
     [Tooltip("Pausa antes de abrir la tienda, para ver morir al último enemigo")]
     [SerializeField] private float shopDelay = 1f;
 
+    [Header("Ánimo")]
+    [SerializeField] private MoodSettings moodSettings;
+
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
 
@@ -207,6 +210,18 @@ public class WaveManager : MonoBehaviour
 
     private void EndNight(bool playerDied)
     {
+        if (playerDied && moodSettings != null)
+        {
+            int wavesCleared = Mathf.Max(0, CurrentWave - 1);
+            int penalty = moodSettings.GetNightPenalty(wavesCleared, waves.Length);
+
+            RunData data = PermanentUpgrades.Data;
+            data.stress = Mathf.Clamp(data.stress + penalty, 0, 100);
+            data.depression = Mathf.Clamp(data.depression + penalty, 0, 100);
+
+            Debug.Log($"[Ánimo] Noche perdida en la oleada {CurrentWave}: +{penalty} a ambos → " +
+                      $"Estrés {data.stress} | Depresión {data.depression}");
+        }
         if (GameManager.Instance != null)
         {
             GameManager.Instance.EndNight(playerDied);

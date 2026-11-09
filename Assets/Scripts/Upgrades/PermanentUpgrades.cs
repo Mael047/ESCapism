@@ -72,4 +72,18 @@ public static class PermanentUpgrades
     }
 
     public static string FormatMoney(int cents) => $"${cents / 100f:0.00}";
+
+    // Penalización a la estadística base de una categoría, según el estado que la afecta
+    public static float GetBasePenalty(UpgradeSettings settings, UpgradeCategory category)
+    {
+        PermanentUpgradeData data = settings.Get(category);
+        if (data == null) return 0f;
+
+        switch (data.affectedBy)
+        {
+            case MoodStat.Estres: return settings.GetMoodBasePenalty(Data.stress);
+            case MoodStat.Depresion: return settings.GetMoodBasePenalty(Data.depression);
+            default: return 0f;
+        }
+    }
 }

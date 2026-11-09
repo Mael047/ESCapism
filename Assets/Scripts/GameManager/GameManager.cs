@@ -115,7 +115,8 @@ public class GameManager : MonoBehaviour
         if (!showDebug) return;
 
         GUI.Label(new Rect(10, 10, 400, 25), $"Ciclo: {CurrentCycle}/{maxCycles}  |  Estado: {CurrentState}");
-        GUI.Label(new Rect(10, 30, 400, 25), $"Dinero: {Data.money}  |  Drops: {Data.drop}");
+        GUI.Label(new Rect(10, 30, 600, 25),
+    $"Dinero: {Data.money}  |  Estrés: {Data.stress}  |  Depresión: {Data.depression}  |  Días buenos: {Data.goodDaysStreak}");
         GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche");
     }
 

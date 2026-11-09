@@ -32,8 +32,8 @@ public class PlayerStats : MonoBehaviour
     {
         DamageBonus = GetBonus(UpgradeCategory.Fuerza);
         FinisherBonus = GetBonus(UpgradeCategory.Remate);
-        SpeedMultiplier = 1f + GetBonus(UpgradeCategory.Agilidad);
-        HealthMultiplier = 1f + GetBonus(UpgradeCategory.Resistencia);
+        SpeedMultiplier = Mathf.Max(0.1f, 1f + GetBonus(UpgradeCategory.Agilidad));
+        HealthMultiplier = Mathf.Max(0.1f, 1f + GetBonus(UpgradeCategory.Resistencia));
 
         player.moveSpeed = baseMoveSpeed * SpeedMultiplier;
         health.SetMaxHealthMultiplier(HealthMultiplier);
@@ -57,7 +57,16 @@ public class PlayerStats : MonoBehaviour
 
     private float GetBonus(UpgradeCategory category)
     {
-        float permanent = settings != null ? PermanentUpgrades.GetBonus(settings, category) : 0f;
-        return permanent + temporaryBonus[(int)category];
+        float permanent = 0f;
+        float penalty = 0f;
+
+        if (settings != null)
+        {
+            permanent = PermanentUpgrades.GetBonus(settings, category);
+            penalty = PermanentUpgrades.GetBasePenalty(settings, category);
+        }
+
+        // La penalización base se resta; las temporales no se ven afectadas
+        return permanent + temporaryBonus[(int)category] - penalty;
     }
 }
