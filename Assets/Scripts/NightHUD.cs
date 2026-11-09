@@ -41,6 +41,12 @@ public class NightHUD : MonoBehaviour
     [SerializeField] private float healFeedbackDuration = 0.9f;
     [SerializeField] private float punchScale = 1.12f;
 
+    [Header("Anuncios")]
+    [SerializeField] private TMP_Text bannerText;
+    [SerializeField] private float bannerDuration = 2f;
+    [SerializeField] private float bannerFade = 0.3f;
+
+    private Coroutine bannerRoutine;
     private Coroutine healRoutine;
     private int accumulatedHeal;
     private Vector2 popupStartPosition;
@@ -58,6 +64,7 @@ public class NightHUD : MonoBehaviour
             popupStartPosition = healPopupText.rectTransform.anchoredPosition;
             healPopupText.gameObject.SetActive(false);
         }
+        if (bannerText != null) bannerText.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -72,6 +79,7 @@ public class NightHUD : MonoBehaviour
         {
             waveManager.WaveStarted += UpdateWave;
             waveManager.EnemiesRemainingChanged += UpdateEnemies;
+            waveManager.WaveCleared += OnWaveCleared;
         }
     }
 
@@ -87,6 +95,7 @@ public class NightHUD : MonoBehaviour
         {
             waveManager.WaveStarted -= UpdateWave;
             waveManager.EnemiesRemainingChanged -= UpdateEnemies;
+            waveManager.WaveCleared -= OnWaveCleared;
         }
     }
 
@@ -150,6 +159,7 @@ public class NightHUD : MonoBehaviour
     {
         if (waveText == null) return;
         waveText.text = isBoss ? $"Oleada {wave}/{total} — ¡JEFE!" : $"Oleada {wave}/{total}";
+        ShowBanner(isBoss ? "¡Llega el jefe!" : $"Oleada {wave}");
     }
 
     private void UpdateEnemies(int remaining)
@@ -222,5 +232,42 @@ public class NightHUD : MonoBehaviour
         if (healPopupText != null) healPopupText.gameObject.SetActive(false);
 
         healRoutine = null;
+    }
+    private void OnWaveCleared(int wave)
+    {
+        ShowBanner("¡Oleada completada!");
+    }
+
+    private void ShowBanner(string message)
+    {
+        if (bannerText == null) return;
+        if (bannerRoutine != null) StopCoroutine(bannerRoutine);
+        bannerRoutine = StartCoroutine(BannerRoutine(message));
+    }
+
+    private System.Collections.IEnumerator BannerRoutine(string message)
+    {
+        bannerText.text = message;
+        bannerText.gameObject.SetActive(true);
+
+        float timer = 0f;
+        while (timer < bannerDuration)
+        {
+            timer += Time.deltaTime;
+
+            // Aparece y desaparece con un fundido
+            float fadeIn = Mathf.Clamp01(timer / bannerFade);
+            float fadeOut = Mathf.Clamp01((bannerDuration - timer) / bannerFade);
+            bannerText.alpha = Mathf.Min(fadeIn, fadeOut);
+
+            // Pequeño "pop" al aparecer
+            float scale = Mathf.Lerp(1.2f, 1f, fadeIn);
+            bannerText.rectTransform.localScale = Vector3.one * scale;
+
+            yield return null;
+        }
+
+        bannerText.gameObject.SetActive(false);
+        bannerRoutine = null;
     }
 }
