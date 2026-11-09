@@ -46,10 +46,7 @@ public class PermanentShopUI : MonoBehaviour
         panel.SetActive(true);
 
         // Pausar el juego y bloquear los controles del jugador
-        Time.timeScale = 0f;
-        InputSystem.actions.FindActionMap("Player")?.Disable();
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        MenuPause.Enter();
 
         Refresh();
         SelectFirstAvailable();

@@ -26,3 +26,21 @@ MonoBehaviour:
     factor: 0.8
   - from: 60
     factor: 0.6
+  temporaries:
+  - {fileID: 11400000, guid: 19656e1637b646c69ef4174a5f6d0ac0, type: 2}
+  - {fileID: 11400000, guid: 6002b8e867174a05b5202b9ed44cc655, type: 2}
+  - {fileID: 11400000, guid: ffbf9a72182a4b9482ef0bb630b8cb0f, type: 2}
+  - {fileID: 11400000, guid: f9ac45dcf1bf4966bcd0323e69dfdf1d, type: 2}
+  - {fileID: 11400000, guid: f3a702d65da94758aaaa84b70f564b05, type: 2}
+  - {fileID: 11400000, guid: a21bca29c04742029f3d463e6c4fd191, type: 2}
+  - {fileID: 11400000, guid: 18f9ff498db9405886425efcf064e4ef, type: 2}
+  - {fileID: 11400000, guid: c2fd9b81b1e043c58bd681d76edcf9ee, type: 2}
+  - {fileID: 11400000, guid: 12f8a2e886a7400982c5fa54cb697264, type: 2}
+  - {fileID: 11400000, guid: 42acfe52892c49db85389da1e171a99b, type: 2}
+  - {fileID: 11400000, guid: 31e372bd6e30479f8d1c8c4628baf9b9, type: 2}
+  - {fileID: 11400000, guid: 3d04d96ce5334029beb4c475a5ce8996, type: 2}
+  nightMoneyPerShop: 6
+  maxTemporaryPerCategory: 2
+  firstRerollCost: 0.5
+  rerollCostIncrease: 0.5
+  maxRerolls: 1

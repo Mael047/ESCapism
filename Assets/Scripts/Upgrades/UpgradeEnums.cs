@@ -13,3 +13,10 @@ public enum MoodStat
     Estres,
     Depresion
 }
+
+public enum UpgradeTier
+{
+    Barata,
+    Intermedia,
+    Cara
+}

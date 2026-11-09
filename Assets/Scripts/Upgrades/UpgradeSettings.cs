@@ -27,6 +27,18 @@ public class UpgradeSettings : ScriptableObject
         new MoodBand { from = 60, factor = 0.6f }    // Estresada
     };
 
+    [Header("Mejoras temporales")]
+    public TemporaryUpgradeData[] temporaries;
+    [Tooltip("Dinero de noche que se da al abrir cada tienda (u)")]
+    public float nightMoneyPerShop = 6f;
+    [Min(1)] public int maxTemporaryPerCategory = 2;
+
+    [Header("Girar (reroll)")]
+    public float firstRerollCost = 0.5f;
+    public float rerollCostIncrease = 0.5f;
+    [Tooltip("Giros permitidos por tienda")]
+    [Min(0)] public int maxRerolls = 1;
+
     public PermanentUpgradeData Get(UpgradeCategory category)
     {
         foreach (PermanentUpgradeData data in permanents)
@@ -51,5 +63,15 @@ public class UpgradeSettings : ScriptableObject
             }
         }
         return factor;
+    }
+
+    public TemporaryUpgradeData GetTemporary(UpgradeCategory category, UpgradeTier tier)
+    {
+        foreach (TemporaryUpgradeData data in temporaries)
+        {
+            if (data != null && data.category == category && data.tier == tier) return data;
+        }
+        Debug.LogError($"[UpgradeSettings] Falta la temporal {category} {tier}");
+        return null;
     }
 }

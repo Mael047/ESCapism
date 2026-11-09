@@ -1495,18 +1495,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shop_Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3552942245308709190, guid: 06c7fabf512364743b9ea048144868d0, type: 3}
-      propertyPath: m_SortingOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5933370620476149795, guid: 06c7fabf512364743b9ea048144868d0, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 1343
-      objectReference: {fileID: 0}
-    - target: {fileID: 9176884107056367462, guid: 06c7fabf512364743b9ea048144868d0, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -40
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
