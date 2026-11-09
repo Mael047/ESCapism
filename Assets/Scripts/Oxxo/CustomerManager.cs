@@ -18,25 +18,28 @@ public struct CustomerResult
     public float ocupacionBolsas;
     public int bolsasUsadas;
     public bool seFueEnojado;
+    /// <summary>True si se cansó de esperar en la fila y se fue sin ser atendido.</summary>
+    public bool abandonoLaFila;
     public Quirk rasgo;
 }
 
 /// <summary>
-/// Controla el ciclo de cada cliente:
-/// crea un cliente al azar con sus productos → se escanean → paga →
-/// el jugador da el cambio y embolsa → se va (se destruye) → llega otro.
-/// Si se le acaba la paciencia, se va enojado.
+/// Controla la fila de clientes:
+/// - Los clientes llegan cada cierto tiempo y hacen fila (máximo 'maxFila').
+/// - El del frente es el que atiendes: sus productos salen a la cinta, paga, das el cambio y embolsas.
+/// - Al irse, los demás avanzan un lugar.
+/// - Los de la fila también pierden paciencia (más lento); si se les acaba, se van.
 /// </summary>
 public class CustomerManager : MonoBehaviour
 {
     [Header("Clientes (prefabs)")]
-    [Tooltip("Prefabs de clientes. Con un solo NPC randomizado basta; si hay varios, se elige uno al azar.")]
+    [Tooltip("Prefab del NPC (con Customer). Si hay varios, se elige uno al azar.")]
     public Customer[] prefabsClientes;
 
-    [Tooltip("Punto donde aparece el cliente (puede ser un objeto del Canvas, como Clients_point).")]
+    [Tooltip("Lugar del cliente que atiendes (frente de la fila), como Clients_point.")]
     public Transform puntoCliente;
 
-    [Header("Interfaz del cliente en la escena (si el prefab no la trae)")]
+    [Header("Interfaz del cliente en la escena")]
     [Tooltip("Image del Canvas con Image Type = Filled.")]
     public Image barraPaciencia;
     [Tooltip("Globo de diálogo del Canvas.")]
@@ -54,11 +57,25 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Si está activo, los clientes empiezan a llegar solos al iniciar.\nSi usas ShiftManager, él lo desactiva y controla el inicio y el final.")]
     public bool iniciarSolo = true;
 
+    [Header("Fila")]
+    [Tooltip("Máximo de clientes en la fila, contando al que atiendes.")]
+    [Min(1)] public int maxFila = 5;
+    [Tooltip("Clientes que ya vienen llegando al empezar la jornada.")]
+    [Min(1)] public int clientesAlIniciar = 2;
+    [Tooltip("Segundos entre la llegada de un cliente y el siguiente (sin bono).")]
+    [Min(0.5f)] public float intervaloLlegada = 10f;
+    [Tooltip("Variación al azar del intervalo (0.3 = ±30%).")]
+    [Range(0f, 0.9f)] public float variacionLlegada = 0.3f;
+    [Tooltip("Separación entre un lugar de la fila y el siguiente (hacia atrás).")]
+    public Vector3 separacionFila = new Vector3(1.6f, 0.15f, 0f);
+    [Tooltip("Tamaño de cada lugar respecto al anterior, para dar profundidad. 1 = todos iguales.")]
+    [Range(0.7f, 1f)] public float escalaPorPuesto = 0.93f;
+    [Tooltip("Qué tan rápido pierden paciencia los que esperan en la fila (0.4 = 40% de lo normal).")]
+    [Range(0f, 1f)] public float pacienciaEnFila = 0.4f;
+
     [Header("Clientes")]
     [Min(1)] public int productosMin = 2;
     [Min(1)] public int productosMax = 6;
-    [Tooltip("Segundos entre que se va un cliente y llega el siguiente.")]
-    public float esperaEntreClientes = 1.5f;
     [Tooltip("Segundos que el cliente se queda diciendo su mensaje antes de irse.")]
     public float tiempoDespedida = 1.2f;
 
@@ -107,6 +124,8 @@ public class CustomerManager : MonoBehaviour
     public int ClientesAtendidos { get; private set; }
     /// <summary>El cliente que se está atendiendo ahora (null entre clientes).</summary>
     public Customer ClienteActual => cliente;
+    /// <summary>Clientes en la fila (0 = el del frente).</summary>
+    public IReadOnlyList<Customer> Fila => fila;
     /// <summary>True mientras llegan clientes.</summary>
     public bool EnJornada { get; private set; }
 
@@ -114,9 +133,12 @@ public class CustomerManager : MonoBehaviour
     public float MultiplicadorPropina { get; set; } = 1f;
     /// <summary>Qué tan rápido baja la paciencia de los clientes nuevos (lo controla ShiftManager).</summary>
     public float VelocidadPaciencia { get; set; } = 1f;
+    /// <summary>Qué tan seguido llegan clientes: 1.5 = 50% más seguido (lo controla ShiftManager).</summary>
+    public float MultiplicadorLlegada { get; set; } = 1f;
 
     public event Action<CustomerResult> OnClienteTerminado;
 
+    readonly List<Customer> fila = new List<Customer>();
     readonly List<Product> productosCliente = new List<Product>();
     Customer cliente;
     bool atendiendo;
@@ -152,7 +174,7 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        // Sin cliente, la barra y el globo de la escena no se ven
+        // Sin cliente al frente, la barra y el globo de la escena no se ven
         if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
         if (globo != null) globo.SetActive(false);
 
@@ -162,11 +184,12 @@ public class CustomerManager : MonoBehaviour
 
     // ---------- Jornada ----------
 
-    /// <summary>Reinicia los contadores y empieza a llamar clientes.</summary>
+    /// <summary>Reinicia los contadores y empieza a llegar gente.</summary>
     public void IniciarJornada()
     {
         StopAllCoroutines();
-        QuitarClienteActual();
+        VaciarFila();
+        LimpiarCaja();
 
         VentasJornada = 0;
         PropinasJornada = 0;
@@ -174,72 +197,126 @@ public class CustomerManager : MonoBehaviour
         EnJornada = true;
 
         ActualizarTexto();
-        StartCoroutine(SiguienteCliente(0.5f));
+        StartCoroutine(Llegadas());
+        StartCoroutine(Atencion());
     }
 
-    /// <summary>Corta la jornada: se va el cliente actual y se limpia todo.</summary>
+    /// <summary>Corta la jornada: se va toda la fila y se limpia todo.</summary>
     public void TerminarJornada()
     {
         EnJornada = false;
         atendiendo = false;
         StopAllCoroutines();
 
-        QuitarClienteActual();
-        LimpiarProductos();
-        caja.NuevoCliente();
-        bagManager.ReiniciarParaNuevoCliente();
+        VaciarFila();
+        LimpiarCaja();
     }
 
-    void QuitarClienteActual()
+    void VaciarFila()
     {
-        if (cliente == null) return;
-        cliente.OnPacienciaAgotada -= AlAgotarPaciencia;
-        cliente.Irse();
+        foreach (var c in fila)
+            if (c != null) c.Irse();
+        fila.Clear();
         cliente = null;
     }
 
-    // ---------- Ciclo del cliente ----------
-
-    IEnumerator SiguienteCliente(float espera)
+    void LimpiarCaja()
     {
-        atendiendo = false;
-        yield return new WaitForSeconds(espera);
-        if (!EnJornada) yield break;
-
         LimpiarProductos();
         caja.NuevoCliente();
         bagManager.ReiniciarParaNuevoCliente();
         cambioDado = false;
         cambioEntregado = 0;
-
-        int cantidad = Random.Range(productosMin, Mathf.Max(productosMin, productosMax) + 1);
-        productosCliente.AddRange(spawner.GenerarCliente(cantidad));
-
-        CrearCliente(cantidad);
-        atendiendo = true;
     }
 
-    void CrearCliente(int cantidadProductos)
-    {
-        Customer prefab = prefabsClientes[Random.Range(0, prefabsClientes.Length)];
+    // ---------- Fila ----------
 
-        if (prefab.transform is RectTransform)
+    /// <summary>Va sumando clientes a la fila cada cierto tiempo (más seguido con el bono).</summary>
+    IEnumerator Llegadas()
+    {
+        for (int i = 0; i < clientesAlIniciar && fila.Count < maxFila; i++)
         {
-            // Cliente hecho con UI (Image): va dentro del punto del Canvas
-            cliente = Instantiate(prefab, puntoCliente, false);
+            AgregarALaFila();
+            yield return new WaitForSeconds(0.7f);
         }
-        else
+
+        while (EnJornada)
         {
-            // Cliente hecho con SpriteRenderers (NPC): va en el mundo, en la posición del punto
-            Vector3 pos = puntoCliente.position;
-            cliente = Instantiate(prefab, new Vector3(pos.x, pos.y, 0f), Quaternion.identity);
+            float intervalo = intervaloLlegada / Mathf.Max(0.1f, MultiplicadorLlegada);
+            intervalo *= Random.Range(1f - variacionLlegada, 1f + variacionLlegada);
+            yield return new WaitForSeconds(intervalo);
+
+            // Si la fila está llena, ese cliente ni entra
+            if (EnJornada && fila.Count < maxFila) AgregarALaFila();
         }
+    }
+
+    void AgregarALaFila()
+    {
+        int puesto = fila.Count;
+        Customer prefab = prefabsClientes[Random.Range(0, prefabsClientes.Length)];
+        Customer c = Instantiate(prefab, PosicionPuesto(puesto), Quaternion.identity);
 
         // Su apariencia y personalidad ya se randomizaron en Awake (NPCAppearance / CustomerPersonality)
-        cliente.UsarInterfaz(barraPaciencia, globo, globoTexto);
-        cliente.velocidad *= VelocidadPaciencia;
-        cliente.OnPacienciaAgotada += AlAgotarPaciencia;
-        cliente.Llegar(pacienciaBase + pacienciaPorProducto * cantidadProductos);
+        c.CantidadProductos = Random.Range(productosMin, Mathf.Max(productosMin, productosMax) + 1);
+        c.FactorFila = pacienciaEnFila;
+        c.velocidad *= VelocidadPaciencia;
+        c.SetPuesto(puesto);
+        c.OnPacienciaAgotada += () => AlAgotarPaciencia(c);
+
+        fila.Add(c);
+        c.Llegar(pacienciaBase + pacienciaPorProducto * c.CantidadProductos, EscalaPuesto(puesto));
+    }
+
+    /// <summary>Saca a un cliente de la fila y los de atrás avanzan un lugar.</summary>
+    void SacarDeLaFila(Customer c)
+    {
+        int indice = fila.IndexOf(c);
+        if (indice < 0) return;
+
+        fila.RemoveAt(indice);
+        c.Irse();
+
+        for (int i = indice; i < fila.Count; i++)
+        {
+            fila[i].SetPuesto(i);
+            fila[i].CaminarA(PosicionPuesto(i), EscalaPuesto(i));
+        }
+    }
+
+    Vector3 PosicionPuesto(int puesto)
+    {
+        Vector3 p = puntoCliente.position + separacionFila * puesto;
+        p.z = 0f;
+        return p;
+    }
+
+    float EscalaPuesto(int puesto) => Mathf.Pow(escalaPorPuesto, puesto);
+
+    // ---------- Atención del cliente del frente ----------
+
+    IEnumerator Atencion()
+    {
+        while (EnJornada)
+        {
+            // Espera a que haya alguien al frente y que ya esté parado en el mostrador
+            while (EnJornada && (fila.Count == 0 || !fila[0].Llego)) yield return null;
+            if (!EnJornada) yield break;
+
+            cliente = fila[0];
+            cliente.PasarAlFrente(barraPaciencia, globo, globoTexto);
+            productosCliente.AddRange(spawner.GenerarCliente(cliente.CantidadProductos));
+            atendiendo = true;
+
+            // Espera a que termine (Terminar pone atendiendo = false)
+            while (atendiendo) yield return null;
+
+            // Se despide, se va y la fila avanza
+            yield return new WaitForSeconds(tiempoDespedida);
+            if (cliente != null) SacarDeLaFila(cliente);
+            cliente = null;
+            LimpiarCaja();
+        }
     }
 
     void AlRegistrarProducto(Product p)
@@ -346,13 +423,30 @@ public class CustomerManager : MonoBehaviour
 
     void AlEmbolsar(Product p) => RevisarFin();
 
-    void AlAgotarPaciencia()
+    void AlAgotarPaciencia(Customer c)
     {
-        if (!atendiendo) return;
+        if (c == null) return;
 
-        cliente.Enojarse();
-        cliente.Decir("¡Ya me voy!");
-        Terminar(seFueEnojado: true);
+        // El que estás atendiendo se va enojado
+        if (c == cliente && atendiendo)
+        {
+            c.Enojarse();
+            c.Decir("¡Ya me voy!");
+            Terminar(seFueEnojado: true);
+            return;
+        }
+
+        // Uno que esperaba en la fila se cansó y se va sin comprar
+        if (!fila.Contains(c)) return;
+
+        c.Enojarse();
+        SacarDeLaFila(c);
+        OnClienteTerminado?.Invoke(new CustomerResult
+        {
+            seFueEnojado = true,
+            abandonoLaFila = true,
+            rasgo = c.Personalidad != null ? c.Personalidad.Rasgo : Quirk.Ninguno
+        });
     }
 
     /// <summary>El cliente se va contento cuando recibió su cambio y todo está en bolsas.</summary>
@@ -402,7 +496,7 @@ public class CustomerManager : MonoBehaviour
 
         ActualizarTexto();
         OnClienteTerminado?.Invoke(r);
-        StartCoroutine(Despedida());
+        // La corrutina Atencion se encarga de la despedida y de avanzar la fila
     }
 
     int CalcularPropina(CustomerResult r)
@@ -421,20 +515,6 @@ public class CustomerManager : MonoBehaviour
 
         float propina = r.total * porcentajePropina * r.paciencia01 * factorCambio * (1f + bonoBolsa) * factorPersonalidad * MultiplicadorPropina;
         return Mathf.RoundToInt(propina);
-    }
-
-    IEnumerator Despedida()
-    {
-        yield return new WaitForSeconds(tiempoDespedida);
-
-        if (cliente != null)
-        {
-            cliente.OnPacienciaAgotada -= AlAgotarPaciencia;
-            cliente.Irse();
-            cliente = null;
-        }
-
-        yield return SiguienteCliente(esperaEntreClientes);
     }
 
     void LimpiarProductos()
