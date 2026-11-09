@@ -3080,19 +3080,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Luciernagas
   seguir: {fileID: 852777921}
-  alturaSuelo: 2
-  cantidadVisual: 120
-  radioVisual: 25
-  cantidadConLuz: 12
-  radioConLuz: 10
-  rangoLuz: 8
-  intensidadLuz: 3
+  alturaSuelo: 3
+  cantidadVisual: 80
+  radioVisual: 15
+  cantidadConLuz: 25
+  radioConLuz: 15
+  rangoLuz: 10
+  intensidadLuz: 2.5
   altura: {x: 0.5, y: 3}
-  tamano: {x: 0.3, y: 0.5}
-  brilloHDR: 1.5
-  colorA: {r: 0.85, g: 1, b: 0.55, a: 1}
-  colorB: {r: 1, g: 0.6, b: 0.85, a: 1}
-  colorC: {r: 0.7, g: 0.6, b: 1, a: 1}
+  tamano: {x: 0.3, y: 0.3}
+  brilloHDR: 1
+  colorA: {r: 0.97994804, g: 1, b: 0.6462264, a: 1}
+  colorB: {r: 0.9811321, g: 0.72659314, b: 0.9633736, a: 1}
+  colorC: {r: 0.830756, g: 0.7837753, b: 0.9716981, a: 1}
 --- !u!1001 &3790729638795247651
 PrefabInstance:
   m_ObjectHideFlags: 0
