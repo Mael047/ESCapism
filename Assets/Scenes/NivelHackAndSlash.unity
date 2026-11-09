@@ -440,6 +440,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
+--- !u!4 &852777921 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2266323844918926547, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
+  m_PrefabInstance: {fileID: 852777920}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1090245003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -550,53 +555,55 @@ MonoBehaviour:
   fases:
   - skyTint: {r: 1, g: 0.6039216, b: 0.4627451, a: 1}
     ground: {r: 0.3247059, g: 0.21176472, b: 0.28705883, a: 1}
-    exposure: 1
-    solRotX: 5
     luzColor: {r: 1, g: 0.6901961, b: 0.5019608, a: 1}
-    luzIntensidad: 1
     ambiente: {r: 0.5411765, g: 0.3529412, b: 0.47843137, a: 1}
     niebla: {r: 0.5411765, g: 0.3529412, b: 0.47843137, a: 1}
+    exposure: 1
+    solRotX: 5
+    luzIntensidad: 1
   - skyTint: {r: 0.9098039, g: 0.4392157, b: 0.5411765, a: 1}
     ground: {r: 0.25882354, g: 0.16235295, b: 0.28, a: 1}
-    exposure: 0.85
-    solRotX: 0
     luzColor: {r: 0.9411765, g: 0.6039216, b: 0.627451, a: 1}
-    luzIntensidad: 0.85
     ambiente: {r: 0.43137255, g: 0.27058825, b: 0.46666667, a: 1}
     niebla: {r: 0.43137255, g: 0.27058825, b: 0.46666667, a: 1}
+    exposure: 0.85
+    solRotX: 0
+    luzIntensidad: 0.85
   - skyTint: {r: 0.6901961, g: 0.3529412, b: 0.627451, a: 1}
     ground: {r: 0.19294119, g: 0.13176471, b: 0.25882354, a: 1}
-    exposure: 0.7
-    solRotX: -5
     luzColor: {r: 0.6901961, g: 0.5019608, b: 0.7529412, a: 1}
-    luzIntensidad: 0.65
     ambiente: {r: 0.32156864, g: 0.21960784, b: 0.43137255, a: 1}
     niebla: {r: 0.32156864, g: 0.21960784, b: 0.43137255, a: 1}
+    exposure: 0.7
+    solRotX: -5
+    luzIntensidad: 0.65
   - skyTint: {r: 0.48235294, g: 0.28235295, b: 0.65882355, a: 1}
     ground: {r: 0.1364706, g: 0.09882354, b: 0.22588237, a: 1}
-    exposure: 0.5
-    solRotX: -10
     luzColor: {r: 0.5411765, g: 0.4392157, b: 0.78431374, a: 1}
-    luzIntensidad: 0.45
     ambiente: {r: 0.22745098, g: 0.16470589, b: 0.3764706, a: 1}
     niebla: {r: 0.22745098, g: 0.16470589, b: 0.3764706, a: 1}
+    exposure: 0.5
+    solRotX: -10
+    luzIntensidad: 0.45
   - skyTint: {r: 0.29411766, g: 0.18039216, b: 0.53333336, a: 1}
     ground: {r: 0.08941177, g: 0.065882355, b: 0.17411765, a: 1}
-    exposure: 0.35
-    solRotX: -15
     luzColor: {r: 0.41568628, g: 0.3529412, b: 0.7529412, a: 1}
-    luzIntensidad: 0.3
     ambiente: {r: 0.14901961, g: 0.10980392, b: 0.2901961, a: 1}
     niebla: {r: 0.14901961, g: 0.10980392, b: 0.2901961, a: 1}
+    exposure: 0.35
+    solRotX: -15
+    luzIntensidad: 0.3
   - skyTint: {r: 0.16470589, g: 0.09411765, b: 0.3764706, a: 1}
     ground: {r: 0.04941177, g: 0.03529412, b: 0.11764707, a: 1}
-    exposure: 0.2
-    solRotX: -20
     luzColor: {r: 0.3137255, g: 0.28235295, b: 0.65882355, a: 1}
-    luzIntensidad: 0.2
     ambiente: {r: 0.08235294, g: 0.05882353, b: 0.19607843, a: 1}
     niebla: {r: 0.08235294, g: 0.05882353, b: 0.19607843, a: 1}
+    exposure: 0.2
+    solRotX: -20
+    luzIntensidad: 0.2
   duracion: 6
+  forzarAmbienteFlat: 1
+  mapearAlTotal: 1
   estrellas: {fileID: 2056080007}
   faseSinEstrellas: 1
   brilloMaxEstrellas: 1
@@ -610,6 +617,8 @@ MonoBehaviour:
   velocidadNubes: 1.5
   tamanoNubes: 0.5
   bloquesPorNube: 3
+  luciernagas: {fileID: 0}
+  faseSinLuciernagas: 1
 --- !u!1 &1196120037
 GameObject:
   m_ObjectHideFlags: 0
@@ -3026,6 +3035,64 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &2119102741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2119102742}
+  - component: {fileID: 2119102743}
+  m_Layer: 0
+  m_Name: Luciernagas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2119102742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119102741}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2119102743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119102741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d807ea16f190b094cba923caf44951f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Luciernagas
+  seguir: {fileID: 852777921}
+  alturaSuelo: 2
+  cantidadVisual: 120
+  radioVisual: 25
+  cantidadConLuz: 12
+  radioConLuz: 10
+  rangoLuz: 8
+  intensidadLuz: 3
+  altura: {x: 0.5, y: 3}
+  tamano: {x: 0.3, y: 0.5}
+  brilloHDR: 1.5
+  colorA: {r: 0.85, g: 1, b: 0.55, a: 1}
+  colorB: {r: 1, g: 0.6, b: 0.85, a: 1}
+  colorC: {r: 0.7, g: 0.6, b: 1, a: 1}
 --- !u!1001 &3790729638795247651
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3169,3 +3236,4 @@ SceneRoots:
   - {fileID: 3790729638795247651}
   - {fileID: 1096270486}
   - {fileID: 2056080005}
+  - {fileID: 2119102742}
