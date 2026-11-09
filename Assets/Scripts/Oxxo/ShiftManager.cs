@@ -50,6 +50,10 @@ public class ShiftManager : MonoBehaviour
     public float pacienciaPorNivel = 0.12f;
     [Tooltip("Velocidad extra de la cinta por nivel (0.1 = +10% por nivel).")]
     public float cintaPorNivel = 0.1f;
+    [Tooltip("Clientes llegan más seguido por nivel (0.2 = 20% más seguido por nivel).")]
+    public float llegadaPorNivel = 0.2f;
+    [Tooltip("Si un cliente se cansa de esperar en la fila y se va, ¿cuenta como error y reinicia la racha?")]
+    public bool abandonoRompeRacha = true;
 
     [Header("Pago al terminar")]
     [Tooltip("Sueldo fijo (miserable), en la misma unidad que los precios. 3000 = $30.00")]
@@ -143,6 +147,7 @@ public class ShiftManager : MonoBehaviour
     void AlTerminarCliente(CustomerResult r)
     {
         if (!EnCurso) return;
+        if (r.abandonoLaFila && !abandonoRompeRacha) return;
 
         bool perfecto = !r.seFueEnojado && r.cambioEntregado == r.cambioEsperado;
         if (perfecto)
@@ -164,6 +169,7 @@ public class ShiftManager : MonoBehaviour
     {
         customerManager.MultiplicadorPropina = MultiplicadorPropina;
         customerManager.VelocidadPaciencia = VelocidadPaciencia;
+        customerManager.MultiplicadorLlegada = 1f + Nivel * llegadaPorNivel;
         if (cinta != null) cinta.velocidad = velocidadCintaBase * (1f + Nivel * cintaPorNivel);
     }
 

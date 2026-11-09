@@ -1,13 +1,15 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /// <summary>
-/// Un cliente. Va en la RAÍZ del prefab del NPC, junto a NPCAppearance y CustomerPersonality.
-/// - Su paciencia baja con el tiempo; cuánta tiene depende de sus productos y de su personalidad.
+/// Un cliente. Va en la RAÍZ del prefab del NPC, junto a NPCAppearance, CustomerPersonality y CustomerWalk.
+/// - Entra caminando a su lugar en la fila y avanza cuando se libera el de adelante.
+/// - Su paciencia baja con el tiempo: más lento mientras espera en la fila, normal cuando lo atienden.
 /// - Su cara (NPCAppearance) cambia sola: Feliz → Serio → Enojado según la paciencia.
-/// - La barra y el globo pueden venir en el prefab o ser de la escena (los pasa el CustomerManager).
+/// - Solo el cliente del frente usa la barra y el globo de la escena.
 /// </summary>
 public class Customer : MonoBehaviour
 {
@@ -39,10 +41,15 @@ public class Customer : MonoBehaviour
     public float velocidad = 1f;
 
     public CustomerPersonality Personalidad { get; private set; }
-    /// <summary>True cuando ya llegó al mostrador (terminó de entrar caminando).</summary>
+    /// <summary>True cuando está quieto en su lugar (no caminando).</summary>
     public bool Llego { get; private set; }
+    /// <summary>True cuando es el cliente que está atendiendo el jugador.</summary>
+    public bool AlFrente { get; private set; }
+    /// <summary>Qué tan rápido pierde paciencia mientras espera en la fila (lo pone CustomerManager).</summary>
+    public float FactorFila { get; set; } = 1f;
+    /// <summary>Cuántos productos trae (lo decide CustomerManager al crearlo).</summary>
+    public int CantidadProductos { get; set; }
 
-    CustomerWalk caminata;
     public float PacienciaMax { get; private set; }
     public float Paciencia { get; private set; }
     public float Paciencia01 => PacienciaMax > 0f ? Paciencia / PacienciaMax : 0f;
@@ -51,18 +58,26 @@ public class Customer : MonoBehaviour
 
     public event Action OnPacienciaAgotada;
 
+    CustomerWalk caminata;
+    SortingGroup grupoOrden;
+    int ordenBase;
+    bool detenido;
+
     void Awake()
     {
         if (apariencia == null) apariencia = GetComponent<NPCAppearance>();
         Personalidad = GetComponent<CustomerPersonality>();
         caminata = GetComponent<CustomerWalk>();
+        grupoOrden = GetComponent<SortingGroup>();
+        if (grupoOrden != null) ordenBase = grupoOrden.sortingOrder;
     }
 
     void Update()
     {
         if (!Esperando) return;
 
-        Paciencia -= Time.deltaTime * velocidad;
+        float factor = AlFrente ? 1f : FactorFila;
+        Paciencia -= Time.deltaTime * velocidad * factor;
         RevisarPaciencia();
     }
 
@@ -75,32 +90,61 @@ public class Customer : MonoBehaviour
     }
 
     /// <summary>
-    /// El cliente llega con 'segundos' de paciencia (antes de su personalidad).
-    /// Si tiene CustomerWalk, primero entra caminando y la paciencia empieza al llegar al mostrador.
+    /// Llega a la fila con 'segundos' de paciencia (antes de su personalidad).
+    /// Entra caminando hasta su posición actual; la paciencia empieza al llegar.
     /// </summary>
-    public void Llegar(float segundos)
+    public void Llegar(float segundos, float escala = 1f)
     {
         float multiplicador = Personalidad != null ? Personalidad.MultiplicadorPaciencia : 1f;
         PacienciaMax = Mathf.Max(1f, segundos * multiplicador);
         Paciencia = PacienciaMax;
         Esperando = false;
         Llego = false;
+        detenido = false;
         ActualizarAnimo();
 
-        if (caminata != null) caminata.Entrar(AlLlegarAlMostrador);
-        else AlLlegarAlMostrador();
+        if (caminata != null) caminata.Entrar(escala, AlLlegarASuLugar);
+        else AlLlegarASuLugar();
     }
 
-    void AlLlegarAlMostrador()
+    /// <summary>Camina a otro lugar (avanzar en la fila). La paciencia sigue corriendo.</summary>
+    public void CaminarA(Vector3 destino, float escala)
+    {
+        Llego = false;
+        if (caminata != null)
+        {
+            caminata.MoverA(destino, escala, AlLlegarASuLugar);
+        }
+        else
+        {
+            transform.position = destino;
+            AlLlegarASuLugar();
+        }
+    }
+
+    void AlLlegarASuLugar()
     {
         Llego = true;
-        Esperando = true;
+        if (!detenido) Esperando = true;
+        ActualizarAnimo();
+        if (AlFrente) ActualizarBarra();
+    }
+
+    /// <summary>Le toca: usa la barra y el globo de la escena y saluda.</summary>
+    public void PasarAlFrente(Image barra, GameObject globoEscena, TMP_Text textoEscena)
+    {
+        AlFrente = true;
+        UsarInterfaz(barra, globoEscena, textoEscena);
 
         if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(true);
         ActualizarBarra();
-        ActualizarAnimo();
-
         Decir(Personalidad != null ? Personalidad.Saludo : "");
+    }
+
+    /// <summary>Lo dibuja más atrás según su lugar en la fila (0 = frente).</summary>
+    public void SetPuesto(int puesto)
+    {
+        if (grupoOrden != null) grupoOrden.sortingOrder = ordenBase - puesto;
     }
 
     /// <summary>Resta paciencia (por ejemplo, por un cambio mal dado).</summary>
@@ -113,7 +157,11 @@ public class Customer : MonoBehaviour
     }
 
     /// <summary>Deja de perder paciencia (ya terminó), pero sigue en pantalla.</summary>
-    public void Detener() => Esperando = false;
+    public void Detener()
+    {
+        detenido = true;
+        Esperando = false;
+    }
 
     /// <summary>Se va contento: la cara mejora un nivel.</summary>
     public void Alegrarse()
@@ -128,14 +176,18 @@ public class Customer : MonoBehaviour
     }
 
     /// <summary>
-    /// El cliente se va: oculta la interfaz, sale caminando (si tiene CustomerWalk) y se destruye.
+    /// El cliente se va: sale caminando (si tiene CustomerWalk) y se destruye.
+    /// Solo oculta la barra y el globo si era el del frente (los demás no los usan).
     /// Devuelve los segundos que tarda en salir.
     /// </summary>
     public float Irse()
     {
-        Esperando = false;
-        if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
-        Decir("");
+        Detener();
+        if (AlFrente)
+        {
+            if (barraPaciencia != null) barraPaciencia.gameObject.SetActive(false);
+            Decir("");
+        }
 
         if (caminata != null)
             return caminata.Salir(() => Destroy(gameObject));
@@ -154,7 +206,7 @@ public class Customer : MonoBehaviour
     void RevisarPaciencia()
     {
         Paciencia = Mathf.Max(0f, Paciencia);
-        ActualizarBarra();
+        if (AlFrente) ActualizarBarra();
         ActualizarAnimo();
 
         if (Paciencia <= 0f && Esperando)
