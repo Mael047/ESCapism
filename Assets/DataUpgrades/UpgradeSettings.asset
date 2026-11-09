@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cfaddbe88a8504e8be297e4af85dcf, type: 3}
   m_Name: UpgradeSettings
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeSettings
-  basePay: 5000
+  basePay: 3000
   maxLevel: 5
   permanents:
   - {fileID: 11400000, guid: d8c9c8fa2dcfc1e45a83e54b46e52066, type: 2}
@@ -22,10 +22,13 @@ MonoBehaviour:
   moodBands:
   - from: 0
     factor: 1
+    basePenalty: 0
   - from: 30
     factor: 0.8
+    basePenalty: 0.1
   - from: 60
     factor: 0.6
+    basePenalty: 0.2
   temporaries:
   - {fileID: 11400000, guid: 19656e1637b646c69ef4174a5f6d0ac0, type: 2}
   - {fileID: 11400000, guid: 6002b8e867174a05b5202b9ed44cc655, type: 2}

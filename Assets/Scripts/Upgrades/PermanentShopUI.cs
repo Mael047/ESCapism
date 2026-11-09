@@ -59,10 +59,7 @@ public class PermanentShopUI : MonoBehaviour
         IsOpen = false;
         panel.SetActive(false);
 
-        Time.timeScale = 1f;
-        InputSystem.actions.FindActionMap("Player")?.Enable();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        MenuPause.Exit();
 
         if (playerStats != null) playerStats.Recalculate();
         Closed?.Invoke();
