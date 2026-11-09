@@ -22,6 +22,11 @@ public class WaveManager : MonoBehaviour
 
     [Header("Tiendas")]
     [SerializeField] private PermanentShopUI permanentShop;
+    [SerializeField] private TemporaryShopUI temporaryShop;
+    [Tooltip("Después de qué oleadas aparece la tienda de temporales")]
+    [SerializeField] private int[] temporaryShopAfterWaves = { 2, 4 };
+    [Tooltip("Pausa antes de abrir la tienda, para ver morir al último enemigo")]
+    [SerializeField] private float shopDelay = 1f;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
@@ -84,6 +89,12 @@ public class WaveManager : MonoBehaviour
 
             WaveCleared?.Invoke(CurrentWave);
             Debug.Log($"[WaveManager] Oleada {CurrentWave} completada");
+            if (i < waves.Length - 1 && ShouldOpenTemporaryShop(CurrentWave))
+            {
+                yield return new WaitForSeconds(shopDelay);
+                temporaryShop.Open();
+                while (temporaryShop.IsOpen) yield return null;
+            }
 
             if (i < waves.Length - 1)
             {
@@ -221,5 +232,10 @@ public class WaveManager : MonoBehaviour
         {
             GUI.Label(new Rect(10, 100, 500, 25), $"Vida jugador: {player.CurrentHealth}/{player.MaxHealth}");
         }
+    }
+
+    private bool ShouldOpenTemporaryShop(int wave)
+    {
+        return temporaryShop != null && Array.IndexOf(temporaryShopAfterWaves, wave) >= 0;
     }
 }

@@ -55,6 +55,7 @@ public class CombatFeedback : MonoBehaviour
 
     public void HitStop(float duration)
     {
+        if (duration <= 0f || MenuPause.IsPaused) return;
         if (duration <= 0f) return;
         float end = Time.unscaledTime + Mathf.Min(duration, maxHitStop);
         if (end > hitStopEndTime) hitStopEndTime = end;
@@ -64,6 +65,7 @@ public class CombatFeedback : MonoBehaviour
 
     private IEnumerator HitStopRoutine()
     {
+        
         inHitStop = true;
         Time.timeScale = hitStopTimeScale;
 
@@ -72,7 +74,7 @@ public class CombatFeedback : MonoBehaviour
             yield return null;
         }
 
-        Time.timeScale = 1f;
+        Time.timeScale = MenuPause.IsPaused ? 0f : 1f;
         inHitStop = false;
     }
 }
