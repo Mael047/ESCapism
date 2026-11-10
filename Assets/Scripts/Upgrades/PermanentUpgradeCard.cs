@@ -14,7 +14,7 @@ public class PermanentUpgradeCard : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;
 
     [Header("Colores")]
-    [SerializeField] private Color affordableColor = Color.white;
+    [SerializeField] private Color affordableColor = Color.green;
     [SerializeField] private Color tooExpensiveColor = new Color(1f, 0.35f, 0.35f);
 
     private UpgradeCategory category;
