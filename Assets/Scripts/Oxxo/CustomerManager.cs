@@ -66,8 +66,9 @@ public class CustomerManager : MonoBehaviour
     [Min(0.5f)] public float intervaloLlegada = 10f;
     [Tooltip("Variación al azar del intervalo (0.3 = ±30%).")]
     [Range(0f, 0.9f)] public float variacionLlegada = 0.3f;
-    [Tooltip("Separación entre un lugar de la fila y el siguiente (hacia atrás).")]
-    public Vector3 separacionFila = new Vector3(1.6f, 0.15f, 0f);
+    [Tooltip("Separación entre un lugar de la fila y el siguiente (hacia atrás).\n" +
+             "Y negativa = los de atrás quedan más abajo, así el mostrador les tapa donde termina el dibujo.")]
+    public Vector3 separacionFila = new Vector3(1.6f, -0.15f, 0f);
     [Tooltip("Tamaño de cada lugar respecto al anterior, para dar profundidad. 1 = todos iguales.")]
     [Range(0.7f, 1f)] public float escalaPorPuesto = 0.93f;
     [Tooltip("Qué tan rápido pierden paciencia los que esperan en la fila (0.4 = 40% de lo normal).")]
@@ -80,9 +81,12 @@ public class CustomerManager : MonoBehaviour
     public float tiempoDespedida = 1.2f;
 
     [Header("Paciencia (segundos)")]
-    public float pacienciaBase = 20f;
-    [Tooltip("Paciencia extra por cada producto que lleva.")]
-    public float pacienciaPorProducto = 6f;
+    [Tooltip("Paciencia fija de todo cliente: el tiempo para cobrarle y dar el cambio.")]
+    public float pacienciaBase = 10f;
+    [Tooltip("Paciencia extra por cada producto (lo que tardas en escanearlo y embolsarlo).")]
+    public float pacienciaPorProducto = 3.5f;
+    [Tooltip("Tope de paciencia, ya contando su personalidad. Así nadie tiene paciencia de sobra en una jornada de 3 minutos.")]
+    public float pacienciaMaxima = 60f;
     public float penalizacionCambioDeMas = 4f;
     public float penalizacionCambioDeMenos = 8f;
 
@@ -265,7 +269,7 @@ public class CustomerManager : MonoBehaviour
         c.OnPacienciaAgotada += () => AlAgotarPaciencia(c);
 
         fila.Add(c);
-        c.Llegar(pacienciaBase + pacienciaPorProducto * c.CantidadProductos, EscalaPuesto(puesto));
+        c.Llegar(pacienciaBase + pacienciaPorProducto * c.CantidadProductos, EscalaPuesto(puesto), pacienciaMaxima);
     }
 
     /// <summary>Saca a un cliente de la fila y los de atrás avanzan un lugar.</summary>

@@ -69,7 +69,7 @@ public class CustomerPersonality : MonoBehaviour
                 Saludo = "¡Rápido, que tengo prisa!";
                 break;
             case Quirk.Paciente:
-                MultiplicadorPaciencia *= 1.5f;
+                MultiplicadorPaciencia *= 1.3f;
                 Saludo = "Con calma, no hay prisa.";
                 break;
             case Quirk.Generoso:

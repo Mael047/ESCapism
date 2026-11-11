@@ -93,10 +93,10 @@ public class Customer : MonoBehaviour
     /// Llega a la fila con 'segundos' de paciencia (antes de su personalidad).
     /// Entra caminando hasta su posición actual; la paciencia empieza al llegar.
     /// </summary>
-    public void Llegar(float segundos, float escala = 1f)
+    public void Llegar(float segundos, float escala = 1f, float maximo = float.MaxValue)
     {
         float multiplicador = Personalidad != null ? Personalidad.MultiplicadorPaciencia : 1f;
-        PacienciaMax = Mathf.Max(1f, segundos * multiplicador);
+        PacienciaMax = Mathf.Clamp(segundos * multiplicador, 1f, Mathf.Max(1f, maximo));
         Paciencia = PacienciaMax;
         Esperando = false;
         Llego = false;
