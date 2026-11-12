@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PermanentUpgradeData
   category: 1
   displayName: Agilidad
-  icon: {fileID: 21300000, guid: 094b4cfa600f54e4186a8232dd5a6dbc, type: 3}
+  icon: {fileID: 0}
+  backGround: {fileID: 21300000, guid: b284ceab27da22e4691d7c82b1a64164, type: 3}
   effectPerLevel: 0.06
   effectText: de velocidad al moverte
   priceMultiplier: 0.5

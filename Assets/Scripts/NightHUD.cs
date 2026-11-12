@@ -45,6 +45,7 @@ public class NightHUD : MonoBehaviour
     [SerializeField] private TMP_Text bannerText;
     [SerializeField] private float bannerDuration = 2f;
     [SerializeField] private float bannerFade = 0.3f;
+    [SerializeField] private Image back;
 
     private Coroutine bannerRoutine;
     private Coroutine healRoutine;
@@ -65,6 +66,7 @@ public class NightHUD : MonoBehaviour
             healPopupText.gameObject.SetActive(false);
         }
         if (bannerText != null) bannerText.gameObject.SetActive(false);
+        if (back != null) back.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -174,10 +176,10 @@ public class NightHUD : MonoBehaviour
         if (statsText == null || playerStats == null) return;
 
         statsText.text =
-    $"Fuerza  {playerStats.DamageBonus * 100f:+0;-0;0}%\n" +
-    $"Remate  {playerStats.FinisherBonus * 100f:+0;-0;0}%\n" +
-    $"Agilidad  {(playerStats.SpeedMultiplier - 1f) * 100f:+0;-0;0}%\n" +
-    $"Resistencia  {(playerStats.HealthMultiplier - 1f) * 100f:+0;-0;0}%";
+    $"{playerStats.DamageBonus * 100f:+0;-0;0}%\n" +
+    $"{playerStats.FinisherBonus * 100f:+0;-0;0}%\n" +
+    $"{(playerStats.SpeedMultiplier - 1f) * 100f:+0;-0;0}%\n" +
+    $"{(playerStats.HealthMultiplier - 1f) * 100f:+0;-0;0}%";
         statsText.text +=
             $"\n\n<size=80%>Estrés {PermanentUpgrades.Data.stress}  ·  Depresión {PermanentUpgrades.Data.depression}</size>";
     }
@@ -242,7 +244,7 @@ public class NightHUD : MonoBehaviour
 
     private void ShowBanner(string message)
     {
-        if (bannerText == null) return;
+        if (bannerText && back == null) return;
         if (bannerRoutine != null) StopCoroutine(bannerRoutine);
         bannerRoutine = StartCoroutine(BannerRoutine(message));
     }
@@ -251,6 +253,7 @@ public class NightHUD : MonoBehaviour
     {
         bannerText.text = message;
         bannerText.gameObject.SetActive(true);
+        back.gameObject.SetActive(true);
 
         float timer = 0f;
         while (timer < bannerDuration)
@@ -261,6 +264,7 @@ public class NightHUD : MonoBehaviour
             float fadeIn = Mathf.Clamp01(timer / bannerFade);
             float fadeOut = Mathf.Clamp01((bannerDuration - timer) / bannerFade);
             bannerText.alpha = Mathf.Min(fadeIn, fadeOut);
+            back.CrossFadeAlpha(bannerFade, bannerDuration, false);
 
             // Pequeño "pop" al aparecer
             float scale = Mathf.Lerp(1.2f, 1f, fadeIn);
@@ -270,6 +274,7 @@ public class NightHUD : MonoBehaviour
         }
 
         bannerText.gameObject.SetActive(false);
+        back.gameObject.SetActive(false);
         bannerRoutine = null;
     }
 }
