@@ -119,17 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &132319405 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1129082771441909896, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-  m_PrefabInstance: {fileID: 852777920}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd438dd108a0f284aa931a2da434f1d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCollisionImpulseSource
 --- !u!1 &497842881
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,14 +427,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3818954179899067251, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: impulseSource
-      value: 
-      objectReference: {fileID: 132319405}
-    - target: {fileID: 7585117209864709271, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: healMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: 58e82a6ba5d3b0947b6ebe697a437d06, type: 2}
     - target: {fileID: 9216385298183538142, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
       propertyPath: m_Name
       value: Player

@@ -105,7 +105,7 @@ public class TemporaryShopUI : MonoBehaviour
     {
         if (!IsOpen) return;
 
-        moneyText.text = $"Dinero de noche: {TemporaryUpgrades.FormatUnits(upgrades.NightMoney)}";
+        moneyText.text = $"Dinero: {TemporaryUpgrades.FormatUnits(upgrades.NightMoney)}";
 
         foreach (TemporaryUpgradeCard card in cards)
         {

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PermanentUpgradeData
   category: 2
   displayName: Resistencia
-  icon: {fileID: 21300000, guid: ee418074efe9b3b409dc72698c72533e, type: 3}
+  icon: {fileID: 0}
+  backGround: {fileID: 21300000, guid: 789d9c6c7365907498d29f14c1b584bd, type: 3}
   effectPerLevel: 0.2
   effectText: "de vida m\xE1xima"
   priceMultiplier: 0.5

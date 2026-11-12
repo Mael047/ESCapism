@@ -6,6 +6,7 @@ public class PermanentUpgradeData : ScriptableObject
     public UpgradeCategory category;
     public string displayName = "Fuerza";
     public Sprite icon;
+    public Sprite backGround;
 
     [Tooltip("Efecto de cada nivel (0.12 = +12%)")]
     public float effectPerLevel = 0.12f;
