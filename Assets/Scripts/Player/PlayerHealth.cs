@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable, IDeathNotifier
 {
@@ -20,6 +21,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IDeathNotifier
     [SerializeField] private string hurtState = "Hurt";
     [SerializeField] private string deathState = "Death";
     [SerializeField] private string locomotionState = "Locomotion";
+
+    [Header("Reaparecer")]
+    [SerializeField] private float respawnInvulnerability = 2f;
+
+    public event Action Revived;
+
+    private DeathDissolve deathDissolve;
 
     public event Action<int> Damaged;
     public event Action Died;
@@ -43,6 +51,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IDeathNotifier
         CurrentHealth = MaxHealth;
         dash = GetComponent<PlayerDash>();
         combat = GetComponent<PlayerCombat>();
+        deathDissolve = GetComponent<DeathDissolve>();
     }
 
     private void Update()
@@ -161,5 +170,42 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IDeathNotifier
         Debug.Log($"[Player] Curado {healed}. Vida: {CurrentHealth}");
         Healed?.Invoke(healed);
         HealthChanged?.Invoke();
+    }
+
+    public void Revive(Vector3 position, Quaternion rotation)
+    {
+        if (!IsDead) return;
+
+        // Deshacer la desintegración (materiales, colliders y física)
+        if (deathDissolve != null) deathDissolve.ResetVisuals();
+
+        // Teletransportar al punto de reaparición
+        Rigidbody rb = GetComponent<Rigidbody>();
+        Vector3 delta = position - transform.position;
+        rb.linearVelocity = Vector3.zero;
+        rb.position = position;
+        rb.rotation = rotation;
+        transform.SetPositionAndRotation(position, rotation);
+
+        // Que la cámara salte con ella en vez de deslizarse por el mapa
+        CinemachineCore.OnTargetObjectWarped(transform, delta);
+
+        // Restaurar estado
+        IsDead = false;
+        IsHurt = false;
+        KnockbackVelocity = Vector3.zero;
+        CurrentHealth = MaxHealth;
+        InvulnerableUntil = Time.time + respawnInvulnerability;
+
+        // Devolver el control
+        GetComponent<Player>().enabled = true;
+        combat.enabled = true;
+        dash.enabled = true;
+
+        animator.speed = 1f;
+        animator.CrossFadeInFixedTime(locomotionState, 0f);
+
+        HealthChanged?.Invoke();
+        Revived?.Invoke();
     }
 }

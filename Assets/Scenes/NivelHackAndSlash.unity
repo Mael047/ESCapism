@@ -153,6 +153,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3e6314cc9a1c802418297e08542106cc, type: 2}
   - {fileID: 11400000, guid: f7a92fdb708620548be3dd6650f99a77, type: 2}
   - {fileID: 11400000, guid: 261ad72c73e878b44bcb55f92eab46e4, type: 2}
+  - {fileID: 11400000, guid: df690e99a812bcf459f558f58dc716be, type: 2}
+  - {fileID: 11400000, guid: 913cd77b0eacffb4ab23067bc01bbdcd, type: 2}
+  - {fileID: 11400000, guid: cdd4c3fde295c44438332110e3c5f822, type: 2}
   firstWaveDelay: 3
   timeBetweenWaves: 5
   maxAliveEnemies: 8
@@ -162,13 +165,17 @@ MonoBehaviour:
   - {fileID: 1196120038}
   - {fileID: 1852228429}
   minDistanceFromPlayer: 6
-  deathDelay: 2.5
+  deathDelay: 5.5
   victoryDelay: 3
   permanentShop: {fileID: 764453773}
   temporaryShop: {fileID: 764453778}
   temporaryShopAfterWaves: 0200000004000000i
   shopDelay: 3
   moodSettings: {fileID: 11400000, guid: 33e944f768bc14848a1ccd6574d52a05, type: 2}
+  livesPerNight: 2
+  respawnDelay: 5
+  restartDelay: 2
+  playerRespawnPoint: {fileID: 0}
   showDebug: 1
 --- !u!4 &497842883
 Transform:
@@ -3161,6 +3168,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5546597553911723742, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+      propertyPath: waveManager
+      value: 
+      objectReference: {fileID: 497842882}
     - target: {fileID: 6365416608537786773, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
       propertyPath: playerStats
       value: 

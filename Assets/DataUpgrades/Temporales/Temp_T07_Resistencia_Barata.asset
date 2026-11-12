@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryUpgradeData
   id: T07
   displayName: "Coraz\xF3n Tibio"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ee418074efe9b3b409dc72698c72533e, type: 3}
   category: 2
   tier: 0
   price: 1

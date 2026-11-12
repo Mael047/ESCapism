@@ -51,6 +51,7 @@ public class PlayerHitFlash : MonoBehaviour
         health.Damaged += OnDamaged;
         health.Healed += OnHealed;
         health.Died += OnDied;
+        health.Revived += OnRevived;
     }
 
     private void OnDisable()
@@ -59,6 +60,7 @@ public class PlayerHitFlash : MonoBehaviour
         health.Healed -= OnHealed;
         health.Died -= OnDied;
         SetMaterials(originalMaterials);
+        health.Revived -= OnRevived;
     }
 
     private void OnDamaged(int amount)
@@ -136,5 +138,24 @@ public class PlayerHitFlash : MonoBehaviour
         {
             if (renderers[i] != null) renderers[i].sharedMaterials = materials[i];
         }
+    }
+
+    private void OnRevived()
+    {
+        if (flashMaterial == null) return;
+        Restart(BlinkRoutine());
+    }
+
+    private IEnumerator BlinkRoutine()
+    {
+        bool on = false;
+        while (Time.time < health.InvulnerableUntil && !health.IsDead)
+        {
+            on = !on;
+            SetMaterials(on ? hurtMaterials : originalMaterials);
+            yield return new WaitForSeconds(blinkInterval);
+        }
+        SetMaterials(originalMaterials);
+        flashRoutine = null;
     }
 }

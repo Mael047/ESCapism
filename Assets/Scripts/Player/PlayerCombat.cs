@@ -32,6 +32,14 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private AttackData dashAttack;
     [SerializeField] private int dashAttackComboIndex = 1;
 
+    [Header("Frenar al chocar con enemigos")]
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private float stopDistance = 0.6f;   // distancia desde el jugador al borde del enemigo
+    [SerializeField] private float checkRadius = 0.4f;
+    [SerializeField] private float checkHeight = 0.8f;    // altura del pecho
+    [SerializeField] private float aimRange = 3f;
+    [SerializeField] private float aimAngle = 60f;   // cono a cada lado
+
     private AttackData currentAttack;
     private static readonly int AttackSpeedHash = Animator.StringToHash("AttackSpeed");
 
@@ -102,6 +110,7 @@ public class PlayerCombat : MonoBehaviour
         float t = attackTimer / CurrentAttack.Duration;
 
         float speed = CurrentAttack.moveCurve.Evaluate(t) * CurrentAttack.moveSpeed;
+        if (speed > 0f && EnemyAhead(AttackDirection)) speed = 0f;
         AttackVelocity = AttackDirection * speed;
 
         bool hasNext = comboIndex < combo.Length - 1;
@@ -131,6 +140,7 @@ public class PlayerCombat : MonoBehaviour
 
         Vector3 inputDirection = player.GetInputDirection();
         AttackDirection = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : transform.forward;
+        AttackDirection = AimAssist(AttackDirection);
         animator.SetFloat(AttackSpeedHash, data.animationSpeed);
         animator.CrossFadeInFixedTime(CurrentAttack.stateName, CurrentAttack.transitionDuration);
         EnterCombat();
@@ -222,4 +232,33 @@ public class PlayerCombat : MonoBehaviour
 
     }
 
+    private bool EnemyAhead(Vector3 direction)
+    {
+        Vector3 origin = transform.position + Vector3.up * checkHeight;
+        return Physics.SphereCast(origin, checkRadius, direction, out _, stopDistance,
+                                  enemyLayer, QueryTriggerInteraction.Ignore);
+    }
+
+    private Vector3 AimAssist(Vector3 direction)
+    {
+        Collider best = null;
+        float bestScore = float.MaxValue;
+
+        foreach (Collider enemy in Physics.OverlapSphere(transform.position, aimRange, enemyLayer, QueryTriggerInteraction.Ignore))
+        {
+            Vector3 toEnemy = enemy.transform.position - transform.position;
+            toEnemy.y = 0f;
+            float angle = Vector3.Angle(direction, toEnemy);
+            if (angle > aimAngle) continue;
+
+            // Prioriza los que están más centrados y más cerca
+            float score = angle + toEnemy.magnitude * 10f;
+            if (score < bestScore) { bestScore = score; best = enemy; }
+        }
+
+        if (best == null) return direction;
+        Vector3 result = best.transform.position - transform.position;
+        result.y = 0f;
+        return result.normalized;
+    }
 }

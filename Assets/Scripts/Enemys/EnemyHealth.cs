@@ -7,10 +7,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IDeathNotifier
 
     public event Action<int> Damaged;
     public event Action Died;
+    public event Action<int, int> HealthChanged;   // vida actual, vida máxima
 
 
     public int CurrentHealth { get; private set; }
     public bool IsDead { get; private set; }
+    public int MaxHealth => maxHealth;
 
     private void Awake()
     {
@@ -21,7 +23,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable, IDeathNotifier
     {
         if (IsDead) return;
 
-        CurrentHealth -= amount;
+        CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+        HealthChanged?.Invoke(CurrentHealth, maxHealth);
 
         if(CurrentHealth <= 0)
         {

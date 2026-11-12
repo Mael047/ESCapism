@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryUpgradeData
   id: T01
   displayName: "Pu\xF1o de Algod\xF3n"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4aef21c8df1e0bb49b6ccca63d19762a, type: 3}
   category: 0
   tier: 0
   price: 1

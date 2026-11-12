@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryUpgradeData
   id: T11
   displayName: Remate Estrella
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5f1ce493432a3fe459b563232a3cfbc6, type: 3}
   category: 3
   tier: 1
   price: 2
