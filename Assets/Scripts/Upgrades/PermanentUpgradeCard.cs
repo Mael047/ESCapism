@@ -59,6 +59,5 @@ public class PermanentUpgradeCard : MonoBehaviour
         priceText.text = PermanentUpgrades.FormatMoney(price);
         priceText.color = canAfford ? affordableColor : tooExpensiveColor;   // rojo si no alcanza
         buyButton.interactable = canAfford;
-        canvasGroup.alpha = 0.7f;
     }
 }

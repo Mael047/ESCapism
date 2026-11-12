@@ -12226,7 +12226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da1316dc07433254889d278cc123f1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatFeedback
-  impulseSource: {fileID: 0}
+  impulseSource: {fileID: 1129082771441909896}
   hitStopTimeScale: 0.05
   maxHitStop: 0.2
 --- !u!1 &8998179484279299074
@@ -12570,6 +12570,8 @@ MonoBehaviour:
   flashDuration: 0.12
   blink: 1
   blinkInterval: 0.08
+  healMaterial: {fileID: 2100000, guid: 58e82a6ba5d3b0947b6ebe697a437d06, type: 2}
+  healFlashDuration: 0.15
 --- !u!114 &1199424460506013392
 MonoBehaviour:
   m_ObjectHideFlags: 0
