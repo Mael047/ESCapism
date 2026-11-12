@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PermanentUpgradeCard : MonoBehaviour
 {
+    [SerializeField] private Image backGround;
     [SerializeField] private Image icon;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text levelText;
@@ -25,6 +26,8 @@ public class PermanentUpgradeCard : MonoBehaviour
     {
         category = data.category;
 
+        backGround.sprite = data.backGround;
+        backGround.enabled = data.backGround != null;
         icon.sprite = data.icon;
         icon.enabled = data.icon != null;
         nameText.text = data.displayName;
@@ -52,10 +55,10 @@ public class PermanentUpgradeCard : MonoBehaviour
         int price = PermanentUpgrades.GetPrice(settings, category);
         bool canAfford = PermanentUpgrades.Data.money >= price;
 
-        levelText.text = $"Nivel {level} → {level + 1}";
+        levelText.text = $"Nivel {level}";
         priceText.text = PermanentUpgrades.FormatMoney(price);
         priceText.color = canAfford ? affordableColor : tooExpensiveColor;   // rojo si no alcanza
         buyButton.interactable = canAfford;
-        canvasGroup.alpha = 1f;
+        canvasGroup.alpha = 0.7f;
     }
 }

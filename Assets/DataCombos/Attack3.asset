@@ -16,9 +16,10 @@ MonoBehaviour:
   clip: {fileID: -1238912460930915015, guid: 647d25a637b105444b9c4f342ccc3a5f, type: 3}
   transitionDuration: 0.1
   damage: 10
+  isFinisher: 0
   cancelPoint: 0.904
   exitPoint: 0.959
-  moveSpeed: 3
+  moveSpeed: 1.5
   moveCurve:
     serializedVersion: 2
     m_Curve:
