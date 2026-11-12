@@ -16,7 +16,7 @@ public static class PermanentUpgrades
         get
         {
             if (GameManager.Instance != null) return GameManager.Instance.Data;
-            if (testData == null) testData = new RunData { money = 20000 , depression = 40 ,stress = 60};   // $200 para probar
+            if (testData == null) testData = new RunData { money = 20000 };   // $200 para probar
             return testData;
         }
     }
