@@ -419,6 +419,97 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 477834319}
   m_CullTransparentMesh: 1
+--- !u!1 &509501409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 509501410}
+  - component: {fileID: 509501412}
+  - component: {fileID: 509501411}
+  m_Layer: 5
+  m_Name: Menu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &509501410
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509501409}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1934557061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 50, y: 490}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &509501411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509501409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb77bf82ca8ab941a968f9dadf3240c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuActions
+--- !u!114 &509501412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509501409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f15fd9cad7c776c46b30f9ea69bb3ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuBuilder
+  entries:
+  - label: JUGAR
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  - label: OPCIONES
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  - label: "CR\xC9DITOS"
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  - label: SALIR
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  position: {x: 140, y: -380}
+  width: 420
+  height: 70
+  spacing: 15
+  textPadding: 30
+  font: {fileID: 0}
+  fontSize: 36
+  textColor: {r: 0, g: 0, b: 0, a: 1}
+  textHoverColor: {r: 1, g: 1, b: 1, a: 1}
+  bandColor: {r: 0.96, g: 0.45, b: 0.71, a: 1}
+  lineColor: {r: 0.8679245, g: 0.2988608, b: 0.58570594, a: 1}
+  lineThickness: 3
+  animSpeed: 12
 --- !u!1 &512568929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,6 +1599,7 @@ RectTransform:
   - {fileID: 814517376}
   - {fileID: 700522571}
   - {fileID: 348869700}
+  - {fileID: 509501410}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
