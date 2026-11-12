@@ -509,7 +509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InkGrow
   minScale: 1
   maxScale: 1.12
-  period: 10
+  period: 20
 --- !u!1 &546264370
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,9 +863,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f82cbfe803b7fa488a0f095162b4a7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Breathe
-  amplitude: 2.5
-  speed: 1.2
-  phase: 0.6
+  amplitude: 10
+  speed: 1
+  phase: 0
 --- !u!1 &814517375
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,8 +919,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f82cbfe803b7fa488a0f095162b4a7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Breathe
-  amplitude: 3
-  speed: 1.2
+  amplitude: 8
+  speed: 0.9
   phase: 0
 --- !u!1 &1032270764
 GameObject:
@@ -1505,8 +1505,8 @@ RectTransform:
   - {fileID: 1636080009}
   - {fileID: 546264371}
   - {fileID: 512568930}
-  - {fileID: 700522571}
   - {fileID: 814517376}
+  - {fileID: 700522571}
   - {fileID: 348869700}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
