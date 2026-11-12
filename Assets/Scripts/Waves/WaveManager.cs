@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
@@ -31,6 +32,18 @@ public class WaveManager : MonoBehaviour
     [Header("Ánimo")]
     [SerializeField] private MoodSettings moodSettings;
 
+    [Header("Vidas")]
+    [SerializeField] private int livesPerNight = 2;
+    [Tooltip("Segundos tras morir antes de reaparecer (deja ver la desintegración)")]
+    [SerializeField] private float respawnDelay = 5f;
+    [Tooltip("Segundos tras reaparecer antes de que empiece de nuevo la oleada")]
+    [SerializeField] private float restartDelay = 2f;
+    [Tooltip("Opcional: si se deja vacío, reaparece donde empezó la noche")]
+    [SerializeField] private Transform playerRespawnPoint;
+
+
+
+
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
 
@@ -38,6 +51,7 @@ public class WaveManager : MonoBehaviour
     public event Action<int, int, bool> WaveStarted;   // oleada, total, ¿es jefe?
     public event Action<int> WaveCleared;
     public event Action NightCompleted;
+    public event Action<EnemyHealth, string> BossSpawned;   // vida del jefe, nombre
 
     public int CurrentWave { get; private set; }       // empieza en 1
     public int AliveEnemies { get; private set; }
@@ -50,10 +64,31 @@ public class WaveManager : MonoBehaviour
     public int TotalWaves => waves.Length;
     public int EnemiesRemaining => AliveEnemies + pendingSpawns;
 
+    public event Action<int, int> LivesChanged;   // vidas restantes, vidas totales
+    public event Action<int> WaveRestarted;
+
+    public int LivesRemaining { get; private set; }
+    public int LivesPerNight => livesPerNight;
+
+    private bool waveFailed;
+    private bool WaveInterrupted => nightOver || waveFailed;
+    private readonly List<GameObject> activeEnemies = new List<GameObject>();
+    private Vector3 respawnPosition;
+    private Quaternion respawnRotation;
+
     private void Start()
     {
         player = FindAnyObjectByType<PlayerHealth>();
         if (player != null) player.Died += OnPlayerDied;
+
+        LivesRemaining = livesPerNight;
+        LivesChanged?.Invoke(LivesRemaining, livesPerNight);
+
+        if (player != null)
+        {
+            respawnPosition = player.transform.position;
+            respawnRotation = player.transform.rotation;
+        }
 
         StartCoroutine(RunNight(GetStartIndex()));
     }
@@ -85,13 +120,21 @@ public class WaveManager : MonoBehaviour
 
         yield return new WaitForSeconds(firstWaveDelay);
 
-        for (int i = startIndex; i < waves.Length; i++)
+        for (int i = startIndex; i < waves.Length;)
         {
             yield return RunWave(i);
             if (nightOver) yield break;
 
+            // Murió con vidas de sobra: reaparece y repite esta misma oleada
+            if (waveFailed)
+            {
+                yield return RespawnRoutine();
+                continue;
+            }
+
             WaveCleared?.Invoke(CurrentWave);
             Debug.Log($"[WaveManager] Oleada {CurrentWave} completada");
+
             if (i < waves.Length - 1 && ShouldOpenTemporaryShop(CurrentWave))
             {
                 yield return new WaitForSeconds(shopDelay);
@@ -103,6 +146,8 @@ public class WaveManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(timeBetweenWaves);
             }
+
+            i++;   // solo avanza si la oleada se completó
         }
 
         // Todas las oleadas completadas
@@ -135,8 +180,8 @@ public class WaveManager : MonoBehaviour
             for (int i = 0; i < group.count; i++)
             {
                 // Esperar si ya hay demasiados enemigos vivos
-                while (AliveEnemies >= maxAliveEnemies && !nightOver) yield return null;
-                if (nightOver) yield break;
+                while (AliveEnemies >= maxAliveEnemies && !WaveInterrupted) yield return null;
+                if (WaveInterrupted) yield break;
 
                 Spawn(group.enemyPrefab);
                 pendingSpawns--;
@@ -146,7 +191,7 @@ public class WaveManager : MonoBehaviour
         }
 
         // Esperar a que mueran todos
-        while (AliveEnemies > 0 && !nightOver) yield return null;
+        while (AliveEnemies > 0 && !WaveInterrupted) yield return null;
     }
 
     // ---------- Enemigos ----------
@@ -155,25 +200,46 @@ public class WaveManager : MonoBehaviour
     {
         Transform point = PickSpawnPoint();
         GameObject enemy = Instantiate(prefab, point.position, point.rotation);
+        Register(enemy);
+    }
 
+    // Para enemigos que no salen de la oleada (ej. los que invoca el jefe)
+    public void RegisterExternalEnemy(GameObject enemy)
+    {
+        if (WaveInterrupted)
+        {
+            Destroy(enemy);
+            return;
+        }
+        Register(enemy);
+        NotifyEnemies();
+    }
+
+    private void Register(GameObject enemy)
+    {
         EnemyHealth health = enemy.GetComponentInChildren<EnemyHealth>();
         if (health == null)
         {
-            Debug.LogWarning($"[WaveManager] {prefab.name} no tiene EnemyHealth y no contará para la oleada");
+            Debug.LogWarning($"[WaveManager] {enemy.name} no tiene EnemyHealth y no contará para la oleada");
             return;
         }
 
         AliveEnemies++;
-        health.Died += OnEnemyDied;
+        activeEnemies.Add(enemy);
+        health.Died += () => OnEnemyDied(enemy);
 
         foreach (IAggroable aggroable in enemy.GetComponentsInChildren<IAggroable>())
         {
             aggroable.ForceAggro();
         }
+
+        BossMarker boss = enemy.GetComponentInChildren<BossMarker>();
+        if (boss != null) BossSpawned?.Invoke(health, boss.DisplayName);
     }
 
-    private void OnEnemyDied()
+    private void OnEnemyDied(GameObject enemy)
     {
+        activeEnemies.Remove(enemy);
         AliveEnemies = Mathf.Max(0, AliveEnemies - 1);
         NotifyEnemies();
     }
@@ -197,9 +263,23 @@ public class WaveManager : MonoBehaviour
 
     private void OnPlayerDied()
     {
-        if (nightOver) return;
-        nightOver = true;
-        StartCoroutine(EndAfterDelay());
+        if (nightOver || waveFailed) return;
+
+        LivesRemaining--;
+        LivesChanged?.Invoke(LivesRemaining, livesPerNight);
+
+        if (LivesRemaining <= 0)
+        {
+            // Segunda muerte: termina la noche
+            nightOver = true;
+            StartCoroutine(EndAfterDelay());
+        }
+        else
+        {
+            // Primera muerte: RunNight reinicia la oleada
+            waveFailed = true;
+            Debug.Log($"[WaveManager] Murió en la oleada {CurrentWave}. Vidas restantes: {LivesRemaining}");
+        }
     }
 
     private IEnumerator EndAfterDelay()
@@ -252,5 +332,40 @@ public class WaveManager : MonoBehaviour
     private bool ShouldOpenTemporaryShop(int wave)
     {
         return temporaryShop != null && Array.IndexOf(temporaryShopAfterWaves, wave) >= 0;
+    }
+
+    private IEnumerator RespawnRoutine()
+    {
+        // Dejar ver la animación de muerte y la desintegración
+        yield return new WaitForSeconds(respawnDelay);
+
+        ClearWave();
+
+        Vector3 position = playerRespawnPoint != null ? playerRespawnPoint.position : respawnPosition;
+        Quaternion rotation = playerRespawnPoint != null ? playerRespawnPoint.rotation : respawnRotation;
+        player.Revive(position, rotation);
+
+        WaveRestarted?.Invoke(CurrentWave);
+        yield return new WaitForSeconds(restartDelay);
+
+        waveFailed = false;
+    }
+
+    // Elimina los enemigos y las orbes de la oleada fallida
+    private void ClearWave()
+    {
+        foreach (GameObject enemy in activeEnemies)
+        {
+            if (enemy != null) Destroy(enemy);
+        }
+        activeEnemies.Clear();
+        AliveEnemies = 0;
+        pendingSpawns = 0;
+        NotifyEnemies();
+
+        foreach (HealthOrb orb in FindObjectsByType<HealthOrb>(FindObjectsSortMode.None))
+        {
+            Destroy(orb.gameObject);
+        }
     }
 }

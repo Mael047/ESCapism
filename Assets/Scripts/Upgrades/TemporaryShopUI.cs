@@ -112,9 +112,7 @@ public class TemporaryShopUI : MonoBehaviour
             if (card.gameObject.activeSelf) card.Refresh();
         }
 
-        rerollText.text = upgrades.HasRerollsLeft
-            ? $"Girar ({TemporaryUpgrades.FormatUnits(upgrades.RerollCost)})"
-            : "Sin giros";
+        
         rerollButton.interactable = upgrades.CanReroll;
     }
 

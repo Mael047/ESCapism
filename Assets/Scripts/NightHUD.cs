@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class NightHUD : MonoBehaviour
 {
@@ -13,15 +14,26 @@ public class NightHUD : MonoBehaviour
     [SerializeField] private Image healthFill;
     [SerializeField] private Image healthTrail;
     [SerializeField] private TMP_Text healthText;
-    [SerializeField]
-    private Gradient healthColor = new Gradient
+
+    [Header("Vidas")]
+    [SerializeField] private Transform heartsContainer;
+    [Tooltip("Corazón de muestra (desactivado). Se copia una vez por cada vida")]
+    [SerializeField] private Image heartTemplate;
+    [SerializeField] private Color heartFullColor = Color.white;
+    [SerializeField] private Color heartLostColor = new Color(0.3f, 0.3f, 0.35f, 0.5f);
+    [SerializeField] private float heartLoseDuration = 0.5f;
+
+    private readonly List<Image> hearts = new List<Image>();
+    private int shownLives = -1;
+
+    [SerializeField] private Gradient healthColor = new Gradient
     {
         colorKeys = new[]
-        {
-            new GradientColorKey(new Color(0.9f, 0.25f, 0.3f), 0f),    // poca vida
-            new GradientColorKey(new Color(1f, 0.75f, 0.25f), 0.5f),
-            new GradientColorKey(new Color(0.4f, 0.85f, 0.5f), 1f)     // vida llena
-        }
+    {
+        new GradientColorKey(new Color32(0xF3, 0x32, 0x83, 0xFF), 0f),    // Poppy Pink: a punto de morir
+        new GradientColorKey(new Color32(0xFF, 0x80, 0xB4, 0xFF), 0.5f),  // Punchy Pink: media vida
+        new GradientColorKey(new Color32(0xFF, 0xAD, 0xD7, 0xFF), 1f)     // Pastel Pink: vida llena
+    }
     };
     [Tooltip("Segundos antes de que la barra de rastro empiece a bajar")]
     [SerializeField] private float trailDelay = 0.4f;
@@ -82,7 +94,10 @@ public class NightHUD : MonoBehaviour
             waveManager.WaveStarted += UpdateWave;
             waveManager.EnemiesRemainingChanged += UpdateEnemies;
             waveManager.WaveCleared += OnWaveCleared;
+            waveManager.LivesChanged += UpdateLives;        // en OnEnable
+            waveManager.WaveRestarted += OnWaveRestarted;
         }
+
     }
 
     private void OnDisable()
@@ -98,6 +113,8 @@ public class NightHUD : MonoBehaviour
             waveManager.WaveStarted -= UpdateWave;
             waveManager.EnemiesRemainingChanged -= UpdateEnemies;
             waveManager.WaveCleared -= OnWaveCleared;
+            waveManager.LivesChanged -= UpdateLives;        // en OnDisable
+            waveManager.WaveRestarted -= OnWaveRestarted;
         }
     }
 
@@ -106,8 +123,9 @@ public class NightHUD : MonoBehaviour
         UpdateHealth(instant: true);
         UpdateStats();
 
-        if (waveText != null) waveText.text = "Preparándose...";
+        if (waveText != null) waveText.text = "Comenzando";
         if (enemiesText != null) enemiesText.text = "";
+        if (waveManager != null) UpdateLives(waveManager.LivesRemaining, waveManager.LivesPerNight);
     }
 
     private void Update()
@@ -276,5 +294,59 @@ public class NightHUD : MonoBehaviour
         bannerText.gameObject.SetActive(false);
         back.gameObject.SetActive(false);
         bannerRoutine = null;
+    }
+
+    private void UpdateLives(int remaining, int total)
+    {
+        if (heartTemplate == null || heartsContainer == null) return;
+
+        // Crear un corazón por cada vida de la noche
+        while (hearts.Count < total)
+        {
+            Image heart = Instantiate(heartTemplate, heartsContainer);
+            heart.gameObject.SetActive(true);
+            hearts.Add(heart);
+        }
+
+        for (int i = 0; i < hearts.Count; i++)
+        {
+            bool alive = i < remaining;
+            bool justLost = !alive && i < shownLives;   // estaba lleno y se acaba de perder
+
+            if (justLost)
+            {
+                StartCoroutine(LoseHeart(hearts[i]));
+            }
+            else
+            {
+                hearts[i].color = alive ? heartFullColor : heartLostColor;
+                hearts[i].rectTransform.localScale = Vector3.one;
+            }
+        }
+
+        shownLives = remaining;
+    }
+
+    // El corazón crece un instante y se apaga
+    private System.Collections.IEnumerator LoseHeart(Image heart)
+    {
+        float timer = 0f;
+        while (timer < heartLoseDuration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / heartLoseDuration);
+
+            heart.rectTransform.localScale = Vector3.one * (1f + 0.4f * Mathf.Sin(t * Mathf.PI));
+            heart.color = Color.Lerp(heartFullColor, heartLostColor, t);
+            yield return null;
+        }
+
+        heart.rectTransform.localScale = Vector3.one;
+        heart.color = heartLostColor;
+    }
+
+    private void OnWaveRestarted(int wave)
+    {
+        ShowBanner("¡Segunda oportunidad!");
     }
 }

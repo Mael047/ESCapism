@@ -2499,7 +2499,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 3
       minMaxState: 0
-      scalar: 1.38
+      scalar: 7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2624,7 +2624,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 0
-    type: 4
+    type: 0
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -4586,7 +4586,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e6deff7c34758c44ad46cc4b57a3594, type: 2}
+  - {fileID: 2100000, guid: b2ae934ed15601b4681a1e702bb607fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7196,6 +7196,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4562140058359210898, guid: 0b49648bbc7a6f64cbd93f1cb109198f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562140058359210898, guid: 0b49648bbc7a6f64cbd93f1cb109198f, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cdece9485b1d4cea9a19a796c453dbf5, type: 2}
     - target: {fileID: 8879528566716807029, guid: 0b49648bbc7a6f64cbd93f1cb109198f, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0

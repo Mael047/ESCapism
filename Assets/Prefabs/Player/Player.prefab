@@ -12428,6 +12428,14 @@ MonoBehaviour:
     m_Bits: 8
   dashAttack: {fileID: 11400000, guid: 7ad69345af41bb84fa55a46b713d02a9, type: 2}
   dashAttackComboIndex: 1
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  stopDistance: 0.6
+  checkRadius: 0.4
+  checkHeight: 0.8
+  aimRange: 3
+  aimAngle: 60
 --- !u!114 &7081844404148209060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12536,6 +12544,7 @@ MonoBehaviour:
   hurtState: Hurt
   deathState: Death
   locomotionState: Locomotion
+  respawnInvulnerability: 2
 --- !u!114 &1532869864913863243
 MonoBehaviour:
   m_ObjectHideFlags: 0

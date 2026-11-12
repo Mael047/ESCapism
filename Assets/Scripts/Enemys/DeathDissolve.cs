@@ -39,6 +39,11 @@ public class DeathDissolve : MonoBehaviour
     private Animator animator;
     private Renderer[] renderers;
     private readonly List<Material> materialInstances = new List<Material>();
+    private Coroutine deathRoutine;
+    private Material[][] savedMaterials;
+    private readonly List<Collider> disabledColliders = new List<Collider>();
+    private Rigidbody body;
+    private bool wasKinematic;
 
     private void Awake()
     {
@@ -81,7 +86,7 @@ public class DeathDissolve : MonoBehaviour
 
     private void OnDied()
     {
-        StartCoroutine(DeathRoutine());
+        deathRoutine = StartCoroutine(DeathRoutine());
     }
 
     private IEnumerator DeathRoutine()
@@ -121,22 +126,30 @@ public class DeathDissolve : MonoBehaviour
 
     private void FreezeInPlace()
     {
-        // Kinematic antes de apagar los colliders: así no cae a través del suelo
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
+        body = GetComponent<Rigidbody>();
+        if (body != null)
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.isKinematic = true;
+            wasKinematic = body.isKinematic;
+            if (!body.isKinematic) body.linearVelocity = Vector3.zero;
+            body.isKinematic = true;
         }
 
+        disabledColliders.Clear();
         foreach (Collider c in GetComponentsInChildren<Collider>())
         {
+            if (!c.enabled) continue;
             c.enabled = false;
+            disabledColliders.Add(c);
         }
     }
 
     private void ApplyDissolveMaterial()
     {
+        savedMaterials = new Material[renderers.Length][];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            savedMaterials[i] = renderers[i].sharedMaterials;
+        }
         foreach (Renderer r in renderers)
         {
             Material[] originals = r.sharedMaterials;
@@ -255,5 +268,43 @@ public class DeathDissolve : MonoBehaviour
             }
         }
         return largest;
+    }
+    // Deshace la muerte: lo usa la protagonista al reaparecer
+    public void ResetVisuals()
+    {
+        if (deathRoutine != null)
+        {
+            StopCoroutine(deathRoutine);
+            deathRoutine = null;
+        }
+
+        if (savedMaterials != null)
+        {
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null) renderers[i].sharedMaterials = savedMaterials[i];
+            }
+            savedMaterials = null;
+        }
+
+        foreach (Renderer r in renderers)
+        {
+            if (r != null) r.enabled = true;
+        }
+
+        foreach (Material m in materialInstances)
+        {
+            if (m != null) Destroy(m);
+        }
+        materialInstances.Clear();
+
+        foreach (Collider c in disabledColliders)
+        {
+            if (c != null) c.enabled = true;
+        }
+        disabledColliders.Clear();
+
+        if (body != null) body.isKinematic = wasKinematic;
+        if (animator != null) animator.speed = 1f;
     }
 }
