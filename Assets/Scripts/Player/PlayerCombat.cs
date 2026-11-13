@@ -60,6 +60,7 @@ public class PlayerCombat : MonoBehaviour
 
     public bool IsAttacking => comboIndex >= 0;
     private bool swingSoundPlayed;
+    public event System.Action<AttackData> AttackStarted;   // para la voz (PlayerAudio)
     public bool InCombat => combatTimer > 0f;
     public Vector3 AttackVelocity { get; private set; }
 
@@ -146,6 +147,7 @@ public class PlayerCombat : MonoBehaviour
         animator.SetFloat(AttackSpeedHash, data.animationSpeed);
         animator.CrossFadeInFixedTime(CurrentAttack.stateName, CurrentAttack.transitionDuration);
         EnterCombat();
+        AttackStarted?.Invoke(data);
     }
     public void StartDashAttack()
     {

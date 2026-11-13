@@ -55,6 +55,7 @@ public class MusicManager : MonoBehaviour
             s.spatialBlend = 0f;   // 2D
             s.volume = 0f;
             s.outputAudioMixerGroup = output;
+            s.ignoreListenerPause = true;   // la música sigue en el menú de pausa
             sources[i] = s;
         }
     }

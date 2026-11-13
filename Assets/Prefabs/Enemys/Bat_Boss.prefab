@@ -122,12 +122,33 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6179891818158252404, guid: fe50615b212b728449045f24c0546216, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1146114624252843239}
+    - targetCorrespondingSourceObject: {fileID: 5786940330208020051, guid: fe50615b212b728449045f24c0546216, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1859531215232972442}
   m_SourcePrefab: {fileID: 100100000, guid: fe50615b212b728449045f24c0546216, type: 3}
 --- !u!198 &177783383757192750 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 7154430684635735305, guid: fe50615b212b728449045f24c0546216, type: 3}
   m_PrefabInstance: {fileID: 7007101596761742119}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3562750101013142900 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5786940330208020051, guid: fe50615b212b728449045f24c0546216, type: 3}
+  m_PrefabInstance: {fileID: 7007101596761742119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1859531215232972442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562750101013142900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1475817dd9ff8b42bcf4ad4c64cf877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
 --- !u!1 &3818308232072673875 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6179891818158252404, guid: fe50615b212b728449045f24c0546216, type: 3}
@@ -165,3 +186,4 @@ MonoBehaviour:
   minionsPerSummon: 2
   summonRadius: 3
   summonVFX: {fileID: 177783383757192750}
+  summonSound: {fileID: 11400000, guid: b28fd1f2f705c5848b8bf10b94dc80bf, type: 2}

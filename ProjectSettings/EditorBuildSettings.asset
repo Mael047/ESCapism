@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Portada.unity
     guid: e3df65e0e2400094fb7879bd17876f6e
   - enabled: 1
+    path: Assets/Scenes/Contexto.unity
+    guid: f12ecd280373f0c449b3420452991b87
+  - enabled: 1
     path: Assets/Scenes/Oxxo.unity
     guid: c59b568738e59ff49bb27d16d06adea5
   - enabled: 1

@@ -158,6 +158,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1838233090}
   - {fileID: 676838709}
   - {fileID: 1235843127}
   - {fileID: 1096270486}
@@ -293,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneMusic
   music: {fileID: 0}
-  volume: 0.331
+  volume: 0.18
   fadeIn: 2
   waveTracks:
   - {fileID: 8300000, guid: 39411aab5247f7a44ac84156593d618e, type: 3}
@@ -545,10 +546,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7081844404148209060, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      propertyPath: dashSound
-      value: 
-      objectReference: {fileID: 11400000, guid: ecf82379d37e18c4786d0ff48f3e2b21, type: 2}
     - target: {fileID: 9216385298183538142, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
       propertyPath: m_Name
       value: Player
@@ -556,10 +553,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9216385298183538142, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2034738194}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
 --- !u!4 &852777921 stripped
 Transform:
@@ -885,7 +879,7 @@ MonoBehaviour:
   skipAllTutorials: 1
   pauseGame: 1
   cardPrefab: {fileID: 0}
-  skipButtonPrefab: {fileID: 0}
+  skipButtonPrefab: {fileID: 843072590818213409, guid: d53f18da3ec1bdf488b0632fc853f631, type: 3}
   font: {fileID: 0}
   veilColor: {r: 0, g: 0, b: 0, a: 0.6}
   pink: {r: 0.953, g: 0.196, b: 0.514, a: 1}
@@ -961,6 +955,57 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1231725018025506107, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
   m_PrefabInstance: {fileID: 3790729638795247651}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1838233089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1838233090}
+  - component: {fileID: 1838233091}
+  m_Layer: 0
+  m_Name: NightAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1838233090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838233089}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.00024414062, y: -0.00001, z: 0.001953125}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 193861759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1838233091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838233089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3967381c7fb5dc249a3580438a47c938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightAudio
+  waveManager: {fileID: 497842882}
+  waveStart: {fileID: 11400000, guid: 1041fc30585666043b1e3894dd44474f, type: 2}
+  bossWaveStart: {fileID: 0}
+  waveCleared: {fileID: 11400000, guid: 1943d480f3be14645ba59f403e455f01, type: 2}
+  lifeLost: {fileID: 11400000, guid: 541200135e879374b8538c5d664e1b65, type: 2}
+  waveRestarted: {fileID: 0}
+  nightCompleted: {fileID: 11400000, guid: 1943d480f3be14645ba59f403e455f01, type: 2}
 --- !u!1 &1852228428
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,17 +1037,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1326726277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2027659145 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9216385298183538142, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
-  m_PrefabInstance: {fileID: 852777920}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2034738181 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1199424460506013392, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
   m_PrefabInstance: {fileID: 852777920}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2027659145}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e11cf6aa0ff0dd4ea7bd6fa71143a60, type: 3}
@@ -1013,29 +1053,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6850081240157686677, guid: 85829092d2d1f724ca0451fea498dc34, type: 3}
   m_PrefabInstance: {fileID: 852777920}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2027659145}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72076391fa15eb8479b77fc6ca6e72a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
---- !u!114 &2034738194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2027659145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47958bd71bec03b43b57686e55fb9095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
-  hurt: {fileID: 0}
-  death: {fileID: 0}
-  heal: {fileID: 11400000, guid: b28fd1f2f705c5848b8bf10b94dc80bf, type: 2}
-  revive: {fileID: 0}
-  footstep: {fileID: 0}
 --- !u!1 &2056080004
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,8 +22,13 @@ public class EnemyAudio : MonoBehaviour
 
     private void Awake()
     {
-        health = GetComponent<EnemyHealth>();
-        bat = GetComponent<BatAI>();
+        // Busca en este objeto, en los padres y en los hijos (EnemyAudio puede ir en un hijo)
+        health = GetComponentInParent<EnemyHealth>();
+        if (health == null) health = GetComponentInChildren<EnemyHealth>();
+        bat = GetComponentInParent<BatAI>();
+        if (bat == null) bat = GetComponentInChildren<BatAI>();
+
+        if (health == null) Debug.LogWarning($"[EnemyAudio] {name} no encontró EnemyHealth", this);
         CreateLoop();
     }
 

@@ -39,14 +39,16 @@ public class CameraLook : MonoBehaviour
         if (lookAction.activeControl?.device is Mouse)
         {
             // Mouse: ya es desplazamiento, NO se multiplica por deltaTime
-            deltaX = look.x * mouseSensitivityX;
-            deltaY = look.y * mouseSensitivityY;
+            float sens = GameSettings.MouseSensitivity;   // multiplicador del menú de opciones
+            deltaX = look.x * mouseSensitivityX * sens;
+            deltaY = look.y * mouseSensitivityY * sens;
         }
         else
         {
             // Stick: es velocidad, SÍ se multiplica por deltaTime
-            deltaX = look.x * stickSpeedX * Time.deltaTime;
-            deltaY = look.y * stickSpeedY * Time.deltaTime;
+            float sens = GameSettings.StickSensitivity;   // multiplicador del menú de opciones
+            deltaX = look.x * stickSpeedX * sens * Time.deltaTime;
+            deltaY = look.y * stickSpeedY * sens * Time.deltaTime;
         }
 
         if (invertY) deltaY = -deltaY;
