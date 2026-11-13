@@ -801,7 +801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
   steps:
   - title: Noche
-    text: Durante la noche eres una guerrera con un poderoso martillo
+    text: Durante la noche eres una guerrera con un poderoso martillo.
     target: {fileID: 0}
     extraTargets: []
     padding: {x: 0, y: 0}
@@ -813,8 +813,8 @@ MonoBehaviour:
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
-  - title: Estado
-    text: Tu rendimiento en el dia te afecta en la noche, tus estadisticas base pueden bajar o mantenerse.
+  - title: "Estad\xEDsticas"
+    text: "Tu rendimiento en el d\xEDa te afecta en la noche, tus estad\xEDsticas base pueden bajar o mantenerse."
     target: {fileID: 614486591}
     extraTargets:
     - {fileID: 1732334374}
@@ -831,7 +831,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   - title: Muerte
-    text: Si tu vida llega a 0 moriras, al morir dos veces volveras al Dia.
+    text: "Si tu vida llega a 0 morir\xE1s, al morir dos veces, volver\xE1s al D\xEDa."
     target: {fileID: 85981323}
     extraTargets:
     - {fileID: 2124305891}
@@ -844,8 +844,8 @@ MonoBehaviour:
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
-  - title: Tienda
-    text: Muevete con WASD y ataca con Click Izquierdo, puedes esquivar ataques con Espacio, hacer combos es importante.
+  - title: Controles
+    text: "Mu\xE9vete con WASD y ataca con clic izquierdo, puedes esquivar ataques con Espacio. Hacer combos es importante."
     target: {fileID: 3790729638795247652}
     extraTargets: []
     padding: {x: 0, y: 0}
@@ -858,7 +858,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   - title: Tienda
-    text: Usa tus ganancias de la tienda para comprar mejoras permanentes
+    text: Usa tus ganancias de la tienda para comprar mejoras permanentes.
     target: {fileID: 3790729638795247652}
     extraTargets: []
     padding: {x: 0, y: 0}
