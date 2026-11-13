@@ -20,4 +20,7 @@ public class RunData
     public int stress;
     public int depression;
     public int goodDaysStreak;
+
+    // Tutorial: si el jugador lo saltó, no vuelve a salir en esta partida
+    public bool tutorialSkipped;
 }

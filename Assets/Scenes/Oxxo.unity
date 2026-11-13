@@ -1490,6 +1490,200 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 341497449}
   m_CullTransparentMesh: 1
+--- !u!1 &342229004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 342229006}
+  - component: {fileID: 342229005}
+  - component: {fileID: 342229007}
+  m_Layer: 0
+  m_Name: Tutorial_Dia
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &342229005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342229004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4dbb9e9f995e84280cf1bed9a7a6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
+  steps:
+  - title: Bienvenido
+    text: Esta es la tienda en la que trabajas, tu rendimiento afecta al juego entero.
+    target: {fileID: 0}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: 'Tiempo '
+    text: "Ac\xE1 podras ver cuanto tiempo restante te queda"
+    target: {fileID: 1715875819}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Estado
+    text: En el estado puedes ver como te encuentras, atender mal o dar mal el cambio te afecta.
+    target: {fileID: 1500025861}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Atender Clientes
+    text: 'Los clientes iran dejando productos en la banda pasalos por la registradora. '
+    target: {fileID: 1849659066}
+    extraTargets:
+    - {fileID: 140504448}
+    - {fileID: 679014736}
+    - {fileID: 2124169429}
+    - {fileID: 1216257133}
+    padding: {x: 10, y: 10}
+    cardPosition: 2
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 1
+    actionId: escanear
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Bolsas
+    text: "Organiza los productos, puedes agregar m\xE1s bolsas en caso de que necesites."
+    target: {fileID: 140504448}
+    extraTargets:
+    - {fileID: 1737416484}
+    - {fileID: 1223103415}
+    - {fileID: 1519460855}
+    padding: {x: 10, y: 10}
+    cardPosition: 2
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: cambio
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Cambio
+    text: Cuando dejes todos los productos en la bolsa, abre la caja.
+    target: {fileID: 1849659066}
+    extraTargets:
+    - {fileID: 140504448}
+    - {fileID: 679014736}
+    - {fileID: 2124169429}
+    - {fileID: 1216257133}
+    padding: {x: 10, y: 10}
+    cardPosition: 2
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 1
+    actionId: abrir_caja
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Cambio
+    text: Puedes devolver billetes o centavos en la parte de abajo, si te equivocas dale al boton de volver azul, cuando el cambio este listo confirmalo con el boton verde.
+    target: {fileID: 2124169429}
+    extraTargets:
+    - {fileID: 702773091}
+    - {fileID: 766253776}
+    padding: {x: 10, y: 10}
+    cardPosition: 2
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: abrir_caja
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  tutorialId: Dia
+  playOnStart: 1
+  startDelay: 0.5
+  onlyFirstTime: 0
+  alwaysShowInEditor: 1
+  onlyFirstDay: 1
+  skipAllTutorials: 0
+  pauseGame: 1
+  cardPrefab: {fileID: 0}
+  skipButtonPrefab: {fileID: 0}
+  font: {fileID: 11400000, guid: 0467aee5e7df0a0498e004f40a47b85c, type: 2}
+  veilColor: {r: 0, g: 0, b: 0, a: 0.8862745}
+  pink: {r: 1, g: 0.4117647, b: 0.7058824, a: 1}
+  keyColor: {r: 1, g: 0.502, b: 0.706, a: 1}
+  cardColor: {r: 1, g: 1, b: 1, a: 0.95}
+  textColor: {r: 0, g: 0, b: 0, a: 1}
+  cardSprite: {fileID: 0}
+  arrowSprite: {fileID: 0}
+  cardWidth: 560
+  titleSize: 40
+  textSize: 28
+  borderThickness: 4
+  sortingOrder: 500
+  cardGap: 50
+  holeSpeed: 12
+  pulseSpeed: 4
+  pulseAmount: 0.03
+  fadeDuration: 0.3
+  onFinished:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &342229006
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342229004}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.50706, y: 4.23675, z: 90.01062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &342229007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342229004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89163bbfe1b9121419b9c739ba19b0b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialOxxoEvents
+  cashRegister: {fileID: 1511638310}
 --- !u!1 &424555765
 GameObject:
   m_ObjectHideFlags: 0
@@ -9700,3 +9894,4 @@ SceneRoots:
   - {fileID: 1517606126}
   - {fileID: 1620101800}
   - {fileID: 1138765413}
+  - {fileID: 342229006}

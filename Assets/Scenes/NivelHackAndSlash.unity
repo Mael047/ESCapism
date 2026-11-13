@@ -119,6 +119,16 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &85981323 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1619501451683606124, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &106078890 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8966257060480998649, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &497842881
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,6 +186,7 @@ MonoBehaviour:
   respawnDelay: 5
   restartDelay: 2
   playerRespawnPoint: {fileID: 0}
+  tutorial: {fileID: 1235843126}
   showDebug: 1
 --- !u!4 &497842883
 Transform:
@@ -206,6 +217,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryUpgrades
   settings: {fileID: 11400000, guid: 67ce4cdbc114fa445b3c144d01aa4610, type: 2}
   playerStats: {fileID: 2034738181}
+--- !u!224 &594275266 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1612927144531651797, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &614486591 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 133690457195158723, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &764453773 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6365416608537786773, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
@@ -622,6 +643,11 @@ MonoBehaviour:
   bloquesPorNube: 3
   luciernagas: {fileID: 0}
   faseSinLuciernagas: 1
+--- !u!224 &1112396719 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3244077446092012388, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1196120037
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,6 +678,149 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1326726277}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1235843125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1235843127}
+  - component: {fileID: 1235843126}
+  m_Layer: 0
+  m_Name: TutorialNoche
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1235843126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235843125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4dbb9e9f995e84280cf1bed9a7a6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
+  steps:
+  - title: Noche
+    text: Durante la noche eres una guerrera con un poderoso martillo
+    target: {fileID: 0}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Estado
+    text: Tu rendimiento en el dia te afecta en la noche, tus estadisticas base pueden bajar o mantenerse.
+    target: {fileID: 614486591}
+    extraTargets:
+    - {fileID: 1732334374}
+    - {fileID: 594275266}
+    - {fileID: 1112396719}
+    - {fileID: 106078890}
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Muerte
+    text: Si tu vida llega a 0 moriras, al morir dos veces volveras al Dia.
+    target: {fileID: 85981323}
+    extraTargets:
+    - {fileID: 2124305891}
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Tienda
+    text: Muevete con WASD y ataca con Click Izquierdo, puedes esquivar ataques con Espacio, hacer combos es importante.
+    target: {fileID: 3790729638795247652}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  - title: Tienda
+    text: Usa tus ganancias de la tienda para comprar mejoras permanentes
+    target: {fileID: 3790729638795247652}
+    extraTargets: []
+    padding: {x: 0, y: 0}
+    cardPosition: 0
+    cardOffset: {x: 0, y: 0}
+    showArrow: 0
+    advance: 0
+    actionId: 
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+  tutorialId: Noche
+  playOnStart: 1
+  startDelay: 0.5
+  onlyFirstTime: 0
+  alwaysShowInEditor: 1
+  pauseGame: 1
+  cardPrefab: {fileID: 0}
+  font: {fileID: 0}
+  veilColor: {r: 0, g: 0, b: 0, a: 0.6}
+  pink: {r: 0.953, g: 0.196, b: 0.514, a: 1}
+  keyColor: {r: 1, g: 0.502, b: 0.706, a: 1}
+  cardColor: {r: 0.07, g: 0.04, b: 0.09, a: 0.95}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  cardSprite: {fileID: 0}
+  arrowSprite: {fileID: 0}
+  cardWidth: 560
+  titleSize: 40
+  textSize: 28
+  borderThickness: 4
+  sortingOrder: 500
+  cardGap: 50
+  holeSpeed: 12
+  pulseSpeed: 4
+  pulseAmount: 0.03
+  fadeDuration: 0.3
+  onFinished:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &1235843127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235843125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.99381, y: 2.95084, z: 89.78873}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1326726276
 GameObject:
@@ -687,6 +856,11 @@ Transform:
   - {fileID: 1852228429}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1732334374 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1231725018025506107, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1852228428
 GameObject:
   m_ObjectHideFlags: 0
@@ -3096,6 +3270,11 @@ MonoBehaviour:
   colorA: {r: 0.97994804, g: 1, b: 0.6462264, a: 1}
   colorB: {r: 0.9811321, g: 0.72659314, b: 0.9633736, a: 1}
   colorC: {r: 0.830756, g: 0.7837753, b: 0.9716981, a: 1}
+--- !u!224 &2124305891 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8776010057973109613, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3790729638795247651
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3241,6 +3420,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+--- !u!224 &3790729638795247652 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3642434281937373116, guid: 5d2f00140bf87034c940041ca559bf11, type: 3}
+  m_PrefabInstance: {fileID: 3790729638795247651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6730856474071400811
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3312,3 +3496,4 @@ SceneRoots:
   - {fileID: 1096270486}
   - {fileID: 2056080005}
   - {fileID: 2119102742}
+  - {fileID: 1235843127}

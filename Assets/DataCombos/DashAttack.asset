@@ -16,6 +16,7 @@ MonoBehaviour:
   clip: {fileID: 870077508699285806, guid: 647d25a637b105444b9c4f342ccc3a5f, type: 3}
   transitionDuration: 0.1
   damage: 15
+  isFinisher: 0
   cancelPoint: 0.695
   exitPoint: 0.9
   moveSpeed: 8
@@ -45,6 +46,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   shockwaveDamage: 15
   hitShake: 0.5
-  hitStop: 0.3
+  hitStop: 0.15
   shockwaveShake: 0
   animationSpeed: 1.8

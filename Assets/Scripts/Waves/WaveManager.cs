@@ -44,6 +44,10 @@ public class WaveManager : MonoBehaviour
 
 
 
+    [Header("Tutorial")]
+    [Tooltip("Opcional: la noche espera a que termine antes de abrir la tienda")]
+    [SerializeField] private TutorialManager tutorial;
+
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
 
@@ -111,6 +115,11 @@ public class WaveManager : MonoBehaviour
     private IEnumerator RunNight(int startIndex)
     {
         yield return null;
+
+        if (tutorial != null)
+        {
+            while (!tutorial.Finished) yield return null;
+        }
 
         if (permanentShop != null)
         {
