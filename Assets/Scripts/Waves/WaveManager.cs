@@ -160,6 +160,7 @@ public class WaveManager : MonoBehaviour
         }
 
         // Todas las oleadas completadas
+        Debug.Log($"[WaveManager] Completadas las {waves.Length} oleadas");
         nightOver = true;
         NightCompleted?.Invoke();
         Debug.Log("[WaveManager] ¡Noche completada!");

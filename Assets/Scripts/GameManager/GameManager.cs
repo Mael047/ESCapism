@@ -80,6 +80,8 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState != GameState.Night) return;
 
+        Debug.Log($"[GameManager] Fin de la noche {CurrentCycle}: {(playerDied ? "MURIÓ" : "COMPLETÓ LAS OLEADAS")} " +
+                  $"(oleada alcanzada {Data.nightWaveReached}). Haz clic en este mensaje para ver quién lo llamó.");
         ChangeState(GameState.NightEnd);
         Data.activeTemporaryUpgrades.Clear();
 
@@ -153,6 +155,9 @@ public class GameManager : MonoBehaviour
     {
         if (!showDebug || Keyboard.current == null) return;
 
+        // Las teclas de debug solo funcionan con Shift, para no presionarlas sin querer
+        if (!Keyboard.current.shiftKey.isPressed) return;
+
         // Atajos temporales para probar el bucle sin gameplay
         if (Keyboard.current.nKey.wasPressedThisFrame) StartNight();
         if (Keyboard.current.mKey.wasPressedThisFrame) EndNight(playerDied: true);
@@ -168,7 +173,7 @@ public class GameManager : MonoBehaviour
         GUI.Label(new Rect(10, 10, 400, 25), $"Ciclo: {CurrentCycle}/{maxCycles}  |  Estado: {CurrentState}");
         GUI.Label(new Rect(10, 30, 600, 25),
     $"Dinero: {Data.money}  |  Estrés: {Data.stress}  |  Depresión: {Data.depression}  |  Días buenos: {Data.goodDaysStreak}");
-        GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche  [V] Ánimo 85");
+        GUI.Label(new Rect(10, 50, 400, 25), "Shift + [N] Noche  [M] Morir  [B] Completar noche  [V] Ánimo 85");
     }
 
     //Dinero de la jornada de trabajo_DIA
