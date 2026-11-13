@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NivelHackAndSlash.unity
     guid: 313a8ddecdc333c41be1d1039f593f7e
+  - enabled: 1
+    path: Assets/Scenes/Finales.unity
+    guid: 2d3e41986237e3d40932cd7f4921205f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
