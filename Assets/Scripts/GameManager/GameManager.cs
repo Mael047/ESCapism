@@ -11,6 +11,15 @@ public enum GameState
     Ending
 }
 
+// Finales del juego
+public enum EndingType
+{
+    None = 0,
+    Good = 1,        // Final 1: completó las oleadas con el ánimo bien
+    Stressed = 2,    // Final 2: completó las oleadas con estrés o depresión por encima de 50
+    Collapse = 3     // Final 3: estrés y depresión en 80 o más al terminar un día o una noche
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -22,12 +31,22 @@ public class GameManager : MonoBehaviour
     [Header("BUcle")]
     [SerializeField] private int maxCycles = 2;
 
+    [Header("Finales")]
+    [SerializeField] private string endingScene = "Finales";
+    [Tooltip("Final 2 si estrés o depresión están POR ENCIMA de este valor al completar las oleadas")]
+    [SerializeField] private int stressedThreshold = 50;
+    [Tooltip("Final 3 si estrés Y depresión llegan a este valor al terminar un día o una noche")]
+    [SerializeField] private int collapseThreshold = 80;
+    [Tooltip("Qué final sale si muere en la última noche sin completar las oleadas")]
+    [SerializeField] private EndingType endingOnLastDeath = EndingType.Collapse;
+
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
 
     public GameState CurrentState { get; private set; } = GameState.Day;
     public int CurrentCycle { get; private set; } = 1;
     public RunData Data { get; private set; } = new RunData();
+    public EndingType Ending { get; private set; } = EndingType.None;
 
     private void Awake()
     {
@@ -45,6 +64,13 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState != GameState.Day) return;
 
+        // Final 3: terminó el día con estrés y depresión al límite
+        if (IsCollapsed())
+        {
+            TriggerEnding(EndingType.Collapse);
+            return;
+        }
+
         ChangeState(GameState.Night);
         SceneTransition.Load(nightScene, TransitionSide.Night);
     }
@@ -57,17 +83,25 @@ public class GameManager : MonoBehaviour
         ChangeState(GameState.NightEnd);
         Data.activeTemporaryUpgrades.Clear();
 
-        // Completó las oleadas: final
+        // Final 3: terminó la noche con estrés y depresión al límite (gane o pierda)
+        if (IsCollapsed())
+        {
+            TriggerEnding(EndingType.Collapse);
+            return;
+        }
+
+        // Completó las oleadas: final 1 o 2 según el ánimo
         if (!playerDied)
         {
-            EvaluateEndings(completedAllWaves: true);
+            bool stressed = Data.stress > stressedThreshold || Data.depression > stressedThreshold;
+            TriggerEnding(stressed ? EndingType.Stressed : EndingType.Good);
             return;
         }
 
         // Murió en el último día: final
         if (CurrentCycle >= maxCycles)
         {
-            EvaluateEndings(completedAllWaves: false);
+            TriggerEnding(endingOnLastDeath);
             return;
         }
 
@@ -78,13 +112,28 @@ public class GameManager : MonoBehaviour
         SceneTransition.Load(dayScene, TransitionSide.Day);
     }
 
-    private void EvaluateEndings(bool completedAllWaves)
+    private bool IsCollapsed()
     {
+        return Data.stress >= collapseThreshold && Data.depression >= collapseThreshold;
+    }
+
+    private void TriggerEnding(EndingType ending)
+    {
+        Ending = ending;
         ChangeState(GameState.Ending);
         UnlockCursor();
 
-        // TODO SCRUM-24: elegir el final según completedAllWaves y Data.emotionalStats
-        Debug.Log($"[GameManager] Evaluar finales. Completó todas las oleadas: {completedAllWaves}");
+        Debug.Log($"[GameManager] Final {(int)ending} ({ending}). Estrés {Data.stress} | Depresión {Data.depression}");
+        SceneTransition.Load(endingScene, TransitionSide.Night);
+    }
+
+    // Para volver a jugar desde cero (lo usa la pantalla de finales)
+    public void ResetRun()
+    {
+        Data = new RunData();
+        CurrentCycle = 1;
+        Ending = EndingType.None;
+        ChangeState(GameState.Day);
     }
 
     private void UnlockCursor()
@@ -108,6 +157,8 @@ public class GameManager : MonoBehaviour
         if (Keyboard.current.nKey.wasPressedThisFrame) StartNight();
         if (Keyboard.current.mKey.wasPressedThisFrame) EndNight(playerDied: true);
         if (Keyboard.current.bKey.wasPressedThisFrame) EndNight(playerDied: false);
+        // [V] subir estrés y depresión a 85 para probar el final 3
+        if (Keyboard.current.vKey.wasPressedThisFrame) { Data.stress = 85; Data.depression = 85; }
     }
 
     private void OnGUI()
@@ -117,7 +168,7 @@ public class GameManager : MonoBehaviour
         GUI.Label(new Rect(10, 10, 400, 25), $"Ciclo: {CurrentCycle}/{maxCycles}  |  Estado: {CurrentState}");
         GUI.Label(new Rect(10, 30, 600, 25),
     $"Dinero: {Data.money}  |  Estrés: {Data.stress}  |  Depresión: {Data.depression}  |  Días buenos: {Data.goodDaysStreak}");
-        GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche");
+        GUI.Label(new Rect(10, 50, 400, 25), "[N] Noche  [M] Morir  [B] Completar noche  [V] Ánimo 85");
     }
 
     //Dinero de la jornada de trabajo_DIA

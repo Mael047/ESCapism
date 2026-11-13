@@ -12299,6 +12299,7 @@ GameObject:
   - component: {fileID: 7585117209864709271}
   - component: {fileID: 1199424460506013392}
   - component: {fileID: 5226746164676089136}
+  - component: {fileID: 4961402251000481498}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -12453,6 +12454,7 @@ MonoBehaviour:
   locomotionState: Locomotion
   transitionDuration: 0.3
   returnTransition: 0.2
+  dashSound: {fileID: 11400000, guid: ecf82379d37e18c4786d0ff48f3e2b21, type: 2}
   dashSpeed: 14
   dashDuration: 0.5
   speedCurve:
@@ -12615,6 +12617,32 @@ MonoBehaviour:
   particleMultiplier: 1
   meshSource: {fileID: 7802823508122303941}
   destroyOnFinish: 0
+--- !u!114 &4961402251000481498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216385298183538142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47958bd71bec03b43b57686e55fb9095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
+  hurt: {fileID: 11400000, guid: f73154d52f6c5e94295e7e47244d0a53, type: 2}
+  death: {fileID: 11400000, guid: d9c24e7dbe150314c9c9bdf4063bdc79, type: 2}
+  heal: {fileID: 11400000, guid: b28fd1f2f705c5848b8bf10b94dc80bf, type: 2}
+  revive: {fileID: 0}
+  footstep: {fileID: 0}
+  attackVoice: {fileID: 11400000, guid: b370771ffbc9aab49b5d67196c26fd96, type: 2}
+  hurtVoice: {fileID: 11400000, guid: 451a8d1575812b94aaabd0cbd263a6ce, type: 2}
+  healVoice: {fileID: 11400000, guid: 025ad5846e547c542bce1897266a2afc, type: 2}
+  dashVoice: {fileID: 11400000, guid: c60cb5da9da73c14da1365be889608dc, type: 2}
+  deathVoice: {fileID: 0}
+  attackVoiceChance: 0.882
+  finisherAlwaysVoice: 0
+  dashVoiceChance: 0.5
+  voiceGap: 0.6
 --- !u!1001 &484323492693377690
 PrefabInstance:
   m_ObjectHideFlags: 0

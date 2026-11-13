@@ -44,6 +44,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3d04d96ce5334029beb4c475a5ce8996, type: 2}
   nightMoneyPerShop: 6
   maxTemporaryPerCategory: 2
-  firstRerollCost: 0.5
-  rerollCostIncrease: 0.5
+  firstRerollCost: 1
+  rerollCostIncrease: 1
   maxRerolls: 1

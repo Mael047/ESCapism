@@ -48,6 +48,7 @@ public class SFX : MonoBehaviour
             AudioSource source = go.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.rolloffMode = AudioRolloffMode.Linear;
+            source.ignoreListenerPause = true;   // los sonidos de UI funcionan en pausa
             pool.Add(source);
         }
     }

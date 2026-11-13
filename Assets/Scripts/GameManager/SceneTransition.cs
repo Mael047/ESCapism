@@ -120,6 +120,12 @@ public class SceneTransition : MonoBehaviour
 
     // ---------- API ----------
 
+    // Cambia de escena con la pantalla de carga pero sin girar (se queda en el lado actual)
+    public static void Load(string sceneName)
+    {
+        Load(sceneName, Instance != null ? Instance.currentSide : TransitionSide.Night);
+    }
+
     // Úsalo en lugar de SceneManager.LoadScene
     public static void Load(string sceneName, TransitionSide target)
     {

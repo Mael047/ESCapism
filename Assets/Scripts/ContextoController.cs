@@ -99,8 +99,9 @@ public class ContextoController : MonoBehaviour
         {
             botonComenzar.gameObject.SetActive(false);
             botonComenzar.onClick.AddListener(Terminar);
-            if (botonOmitir) botonOmitir.onClick.AddListener(Terminar);
         }
+        // Omitir funciona aunque no haya botón Comenzar
+        if (botonOmitir) botonOmitir.onClick.AddListener(Terminar);
         StartCoroutine(Secuencia());
     }
 
@@ -119,6 +120,7 @@ public class ContextoController : MonoBehaviour
     StopAllCoroutines();
     if (musicaSrc) musicaSrc.Stop();
     if (ambienteSrc) ambienteSrc.Stop();
+    if (botonOmitir) botonOmitir.gameObject.SetActive(false);
     alTerminar.Invoke();
 }
     IEnumerator Reproducir(Beat b)

@@ -4640,6 +4640,55 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!1 &5786940330208020051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3040408344256164804}
+  - component: {fileID: 6889522060498198222}
+  m_Layer: 6
+  m_Name: EnemySounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3040408344256164804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786940330208020051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6567318496163603757}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6889522060498198222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786940330208020051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5cbd9387ee27148b99f676fc4e5a4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAudio
+  wingLoop: {fileID: 11400000, guid: b581248740061834db8cea180c7e9b46, type: 2}
+  charge: {fileID: 11400000, guid: bbbffd458d42bfb44a2c0e3d0b7d072d, type: 2}
+  lunge: {fileID: 11400000, guid: 667077b56df669046b4a471358e1577c, type: 2}
+  hurt: {fileID: 11400000, guid: bbbffd458d42bfb44a2c0e3d0b7d072d, type: 2}
+  death: {fileID: 11400000, guid: bbbffd458d42bfb44a2c0e3d0b7d072d, type: 2}
 --- !u!1 &6179891818158252404
 GameObject:
   m_ObjectHideFlags: 0
@@ -4677,6 +4726,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6884538399067379777}
+  - {fileID: 3040408344256164804}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4914670943722083100

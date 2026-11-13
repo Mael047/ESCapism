@@ -8,10 +8,22 @@ public class MenuActions : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    // Para el botón Jugar: entra al día con la pantalla de carga
+    // Pantalla de carga sin girar (ej. Portada → Contexto)
+    public void LoadSceneWithTransition(string sceneName)
+    {
+        SceneTransition.Load(sceneName);
+    }
+
+    // Entra al día con la pantalla de carga (gira al lado del día)
     public void StartGame(string sceneName)
     {
         SceneTransition.Load(sceneName, TransitionSide.Day);
+    }
+
+    // Para el botón Opciones: arrastra el MenuOpciones de la escena al campo del evento
+    public void OpenOptions(OptionsMenu options)
+    {
+        if (options != null) options.Open();
     }
 
     public void Quit()

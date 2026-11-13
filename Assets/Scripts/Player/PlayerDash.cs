@@ -13,6 +13,8 @@ public class PlayerDash : MonoBehaviour
 
     [Header("Sonido")]
     [SerializeField] private SoundData dashSound;
+
+    public event System.Action DashStarted;   // para la voz (PlayerAudio)
     //
     [Header("Movimiento")]
     [SerializeField] private float dashSpeed = 10f;
@@ -89,6 +91,7 @@ public class PlayerDash : MonoBehaviour
         animator.CrossFadeInFixedTime(dashState, transitionDuration);
         if (dashTrail != null) dashTrail.Play(true);
         SFX.Play(dashSound, transform.position);
+        DashStarted?.Invoke();
 
     }
 
