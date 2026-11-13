@@ -481,19 +481,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuBuilder
   entries:
-  - label: JUGAR
+  - label: Jugar
+    onClick:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 509501411}
+          m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
+          m_MethodName: StartGame
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Oxxo
+            m_BoolArgument: 0
+          m_CallState: 2
+  - label: Opciones
     onClick:
       m_PersistentCalls:
         m_Calls: []
-  - label: OPCIONES
+  - label: Creditos
     onClick:
       m_PersistentCalls:
         m_Calls: []
-  - label: "CR\xC9DITOS"
-    onClick:
-      m_PersistentCalls:
-        m_Calls: []
-  - label: SALIR
+  - label: Salir
     onClick:
       m_PersistentCalls:
         m_Calls: []

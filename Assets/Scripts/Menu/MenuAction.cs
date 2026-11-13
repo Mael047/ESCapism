@@ -8,6 +8,12 @@ public class MenuActions : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
+    // Para el botón Jugar: entra al día con la pantalla de carga
+    public void StartGame(string sceneName)
+    {
+        SceneTransition.Load(sceneName, TransitionSide.Day);
+    }
+
     public void Quit()
     {
         Application.Quit();

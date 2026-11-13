@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         if (CurrentState != GameState.Day) return;
 
         ChangeState(GameState.Night);
-        SceneManager.LoadScene(nightScene);
+        SceneTransition.Load(nightScene, TransitionSide.Night);
     }
 
     // Llamar al morir o al sobrevivir la noche
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         CurrentCycle++;
         ChangeState(GameState.Day);
         UnlockCursor();
-        SceneManager.LoadScene(dayScene);
+        SceneTransition.Load(dayScene, TransitionSide.Day);
     }
 
     private void EvaluateEndings(bool completedAllWaves)
