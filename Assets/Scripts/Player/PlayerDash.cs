@@ -10,6 +10,9 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private string locomotionState = "Locomotion";
     [SerializeField] private float transitionDuration = 0.1f;
     [SerializeField] private float returnTransition = 0.1f;
+
+    [Header("Sonido")]
+    [SerializeField] private SoundData dashSound;
     //
     [Header("Movimiento")]
     [SerializeField] private float dashSpeed = 10f;
@@ -85,6 +88,7 @@ public class PlayerDash : MonoBehaviour
         attackQueued = false;
         animator.CrossFadeInFixedTime(dashState, transitionDuration);
         if (dashTrail != null) dashTrail.Play(true);
+        SFX.Play(dashSound, transform.position);
 
     }
 

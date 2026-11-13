@@ -65,6 +65,7 @@ public class WeaponHitbox : MonoBehaviour
                 {
                     target.TakeDamage(damage);
                     SpawnHitVFX(hit, position);
+                    if (currentAttack != null) SFX.Play(currentAttack.hitSound, hit.ClosestPoint(position));
 
                     if (CombatFeedback.Instance != null && currentAttack != null)
                     {

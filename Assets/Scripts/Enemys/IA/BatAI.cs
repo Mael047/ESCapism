@@ -63,6 +63,10 @@ public class BatAI : MonoBehaviour, IAggroable
     private readonly Collider[] neighbors = new Collider[8];
 
     private State state = State.Idle;
+
+    // Para el sonido (EnemyAudio)
+    public event System.Action WindupStarted;
+    public event System.Action LungeStarted;
     private float stateTimer;
     private float cooldownTimer;
     private float orbitAngle;
@@ -152,6 +156,7 @@ public class BatAI : MonoBehaviour, IAggroable
                     ChangeState(State.Windup);
                     PlayAnim("Attack");
                     if (chargeVFX != null) chargeVFX.Play(true);
+                    WindupStarted?.Invoke();
                 }
                 break;
 
@@ -413,6 +418,7 @@ public class BatAI : MonoBehaviour, IAggroable
 
         StopVFX(chargeVFX);
         if (attackVFX != null) attackVFX.Play(true);
+        LungeStarted?.Invoke();
     }
 
     private void ReturnToIdle()

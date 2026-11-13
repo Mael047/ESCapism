@@ -140,7 +140,8 @@ public class SceneTransition : MonoBehaviour
         IsTransitioning = true;
         group.blocksRaycasts = true;   // nadie hace clic mientras carga
 
-        // 1. La escena actual se funde a negro
+        // 1. La escena actual se funde a negro (y su música se apaga)
+        if (MusicManager.Instance != null) MusicManager.Instance.FadeOut(sceneFadeOut + loadingFadeIn);
         yield return FadeBlack(0f, 1f, sceneFadeOut);
 
         // 2. Empieza a cargar la nueva escena por detrás (sin activarla todavía)
