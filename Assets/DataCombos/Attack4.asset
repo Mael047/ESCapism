@@ -58,3 +58,6 @@ MonoBehaviour:
   hitStop: 1.8
   shockwaveShake: 0.8
   animationSpeed: 1.3
+  swingSound: {fileID: 11400000, guid: 22a4118a9d5d67f4dbac7d9f16650945, type: 2}
+  hitSound: {fileID: 11400000, guid: c864b05bf0f1a3b41bb4770c612ce2ab, type: 2}
+  shockwaveSound: {fileID: 11400000, guid: 9c06b0b7f3ac1c940b72fc72e52f7d33, type: 2}

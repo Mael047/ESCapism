@@ -59,6 +59,7 @@ public class PlayerCombat : MonoBehaviour
 
 
     public bool IsAttacking => comboIndex >= 0;
+    private bool swingSoundPlayed;
     public bool InCombat => combatTimer > 0f;
     public Vector3 AttackVelocity { get; private set; }
 
@@ -134,6 +135,7 @@ public class PlayerCombat : MonoBehaviour
     {
         comboIndex = index;
         currentAttack = data;
+        swingSoundPlayed = false;
         attackTimer = 0f;
         nextQueued = false;
         DeactivateAllHitboxes();
@@ -183,6 +185,13 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!IsAttacking) return;
         hitboxes[index].Activate(CurrentAttack);
+
+        // Un solo sonido de swing por golpe, aunque haya varios hitboxes
+        if (!swingSoundPlayed)
+        {
+            swingSoundPlayed = true;
+            SFX.Play(CurrentAttack.swingSound, transform.position);
+        }
     }
 
     public void HitboxOff(int index)
@@ -223,6 +232,7 @@ public class PlayerCombat : MonoBehaviour
             spawnPoint = groundHit.point;
         }
         Shockwave wave = Instantiate(shockwavePrefab, spawnPoint, Quaternion.identity);
+        SFX.Play(CurrentAttack.shockwaveSound, spawnPoint);
         float multiplier = stats != null ? stats.GetDamageMultiplier(CurrentAttack.isFinisher) : 1f;
         wave.Initialize(Mathf.RoundToInt(CurrentAttack.shockwaveDamage * multiplier));
         if (CombatFeedback.Instance != null)

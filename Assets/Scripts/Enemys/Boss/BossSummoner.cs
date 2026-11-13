@@ -12,6 +12,8 @@ public class BossSummoner : MonoBehaviour
     [SerializeField] private float summonRadius = 3f;
     [Tooltip("Opcional: partículas que salen en cada invocado")]
     [SerializeField] private ParticleSystem summonVFX;
+    [Tooltip("Opcional: suena una vez en cada invocación")]
+    [SerializeField] private SoundData summonSound;
 
     private EnemyHealth health;
     private WaveManager waveManager;
@@ -42,6 +44,7 @@ public class BossSummoner : MonoBehaviour
 
     private void Summon()
     {
+        SFX.Play(summonSound, transform.position);
         for (int i = 0; i < minionsPerSummon; i++)
         {
             // Repartidos en círculo alrededor del jefe

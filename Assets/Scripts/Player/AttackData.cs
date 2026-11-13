@@ -38,5 +38,13 @@ public class AttackData : ScriptableObject
 
     [Min(0.1f)] public float animationSpeed = 1f;
 
+    [Header("Sonido")]
+    [Tooltip("El golpe al aire (suena cuando se activa el hitbox)")]
+    public SoundData swingSound;
+    [Tooltip("Al conectar con un enemigo")]
+    public SoundData hitSound;
+    [Tooltip("Al golpear el suelo con la onda expansiva")]
+    public SoundData shockwaveSound;
+
     public float Duration => clip != null ? clip.length / animationSpeed : 1f;
 }

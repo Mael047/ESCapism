@@ -5,10 +5,18 @@ using UnityEngine;
 public class AnimationEventRelay : MonoBehaviour
 {
     private PlayerCombat combat;
+    private PlayerAudio playerAudio;
 
     private void Awake()
     {
         combat  = GetComponentInParent<PlayerCombat>();
+        playerAudio = GetComponentInParent<PlayerAudio>();
+    }
+
+    // Evento de animación en los pasos de la animación de caminar/correr
+    public void Footstep()
+    {
+        if (playerAudio != null) playerAudio.Footstep();
     }
 
     public void HitboxOn(int index) => combat.HitboxOn(index);

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac095c6c53057cc49874dec4b9879fb5, type: 3}
+  m_Name: SFX_Swing
+  m_EditorClassIdentifier: Assembly-CSharp::SoundData
+  clips:
+  - {fileID: 8300000, guid: bc58fae2f43bb70419f729219b69c5e2, type: 3}
+  - {fileID: 8300000, guid: eae60ab54169d0145b852b6e9df1d609, type: 3}
+  - {fileID: 8300000, guid: 138d80506320981489e51f4e55676352, type: 3}
+  - {fileID: 8300000, guid: 3f0f17760fa2b2148bfb0e39a57a5eca, type: 3}
+  volume: 1
+  volumeVariation: 0.1
+  pitch: {x: 0.95, y: 1.05}
+  spatialBlend: 0.5
+  minDistance: 3
+  maxDistance: 35
+  maxInstances: 4
+  cooldown: 0.03
+  output: {fileID: -7772607438824219339, guid: 6185db0531c4c874ca7a4f8c625d5b39, type: 2}
