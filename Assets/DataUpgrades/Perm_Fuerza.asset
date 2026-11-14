@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Fuerza
   icon: {fileID: 0}
   backGround: {fileID: 21300000, guid: 1d23216f0e9986f46bb76517199386c9, type: 3}
-  effectPerLevel: 0.12
+  effectPerLevel: 0.3
   effectText: "de da\xF1o con el martillo"
   priceMultiplier: 0.0667
   affectedBy: 2
