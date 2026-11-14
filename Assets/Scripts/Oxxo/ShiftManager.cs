@@ -74,6 +74,12 @@ public class ShiftManager : MonoBehaviour
     public GameObject panelResultados;
     public TMP_Text textoResultados;
 
+    [Header("Sonido de tiempo por terminar")]
+    [Tooltip("Suena una vez cuando el timer se pone rojo (en los últimos 'Segundos Aviso').")]
+    public AudioClip sonidoAviso;
+    [Tooltip("Si se deja vacío, usa el AudioSource de este objeto o crea uno (su Volume controla el volumen).")]
+    public AudioSource audioAviso;
+
     /// <summary>Se lanza al terminar la jornada, con el pago. Úsalo desde tu GameManager.</summary>
     public event Action<ShiftResult> OnJornadaTerminada;
 
@@ -93,6 +99,14 @@ public class ShiftManager : MonoBehaviour
         if (customerManager != null) customerManager.iniciarSolo = false;
         if (cinta != null) velocidadCintaBase = cinta.velocidad;
         if (panelResultados != null) panelResultados.SetActive(false);
+
+        // Si hay sonido pero no AudioSource, usa el de este objeto o crea uno
+        if (audioAviso == null) audioAviso = GetComponent<AudioSource>();
+        if (audioAviso == null && sonidoAviso != null)
+        {
+            audioAviso = gameObject.AddComponent<AudioSource>();
+            audioAviso.playOnAwake = false;
+        }
     }
 
     void OnEnable()
@@ -120,6 +134,7 @@ public class ShiftManager : MonoBehaviour
         Racha = 0;
         RachaMaxima = 0;
         EnCurso = true;
+        avisoSonado = false;
 
         if (panelResultados != null) panelResultados.SetActive(false);
         if (dragController != null) dragController.enabled = true;
@@ -142,7 +157,20 @@ public class ShiftManager : MonoBehaviour
             TerminarJornada();
         }
         ActualizarTimer();
+
+        // Suena una sola vez en el instante en que el timer se pone rojo
+        if (EnCurso && !avisoSonado && TiempoRestante <= segundosAviso)
+        {
+            avisoSonado = true;
+            if (audioAviso != null && sonidoAviso != null)
+            {
+                audioAviso.clip = sonidoAviso;
+                audioAviso.Play();
+            }
+        }
     }
+
+    bool avisoSonado;
 
     void AlTerminarCliente(CustomerResult r)
     {
@@ -176,6 +204,7 @@ public class ShiftManager : MonoBehaviour
     void TerminarJornada()
     {
         EnCurso = false;
+        if (audioAviso != null && audioAviso.clip == sonidoAviso) audioAviso.Stop();
         if (dragController != null) dragController.enabled = false;
         customerManager.TerminarJornada();
 

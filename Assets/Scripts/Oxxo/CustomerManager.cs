@@ -123,6 +123,18 @@ public class CustomerManager : MonoBehaviour
     [Tooltip("Texto para ver ventas y propinas de la jornada.")]
     public TMP_Text textoGanancias;
 
+    [Header("Sonidos (opcional)")]
+    [Tooltip("Suena cada vez que un cliente entra a la tienda (por ejemplo, una campanita de puerta).")]
+    public AudioClip sonidoIngreso;
+    [Tooltip("Suena cuando un cliente se va contento.")]
+    public AudioClip sonidoSeVaFeliz;
+    [Tooltip("Suena cuando un cliente se va serio (ni contento ni enojado).")]
+    public AudioClip sonidoSeVaNormal;
+    [Tooltip("Suena cuando un cliente se va enojado (también si abandona la fila).")]
+    public AudioClip sonidoSeVaEnojado;
+    [Tooltip("Su Volume controla el volumen del sonido. Si se deja vacío, usa el AudioSource de este objeto o crea uno.")]
+    public AudioSource audioSource;
+
     public int VentasJornada { get; private set; }
     public int PropinasJornada { get; private set; }
     public int ClientesAtendidos { get; private set; }
@@ -153,6 +165,15 @@ public class CustomerManager : MonoBehaviour
     {
         // Ahora los productos los pide este manager; el spawner no genera nada por su cuenta
         if (spawner != null) spawner.productosAlIniciar = 0;
+
+        // Si hay sonido pero no AudioSource, usa el de este objeto o crea uno
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+        bool haySonidos = sonidoIngreso != null || sonidoSeVaFeliz != null || sonidoSeVaNormal != null || sonidoSeVaEnojado != null;
+        if (audioSource == null && haySonidos)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
     }
 
     void OnEnable()
@@ -269,6 +290,7 @@ public class CustomerManager : MonoBehaviour
         c.OnPacienciaAgotada += () => AlAgotarPaciencia(c);
 
         fila.Add(c);
+        if (audioSource != null && sonidoIngreso != null) audioSource.PlayOneShot(sonidoIngreso);
         c.Llegar(pacienciaBase + pacienciaPorProducto * c.CantidadProductos, EscalaPuesto(puesto), pacienciaMaxima);
     }
 
@@ -279,6 +301,7 @@ public class CustomerManager : MonoBehaviour
         if (indice < 0) return;
 
         fila.RemoveAt(indice);
+        SonarDespedida(c);
         c.Irse();
 
         for (int i = indice; i < fila.Count; i++)
@@ -286,6 +309,20 @@ public class CustomerManager : MonoBehaviour
             fila[i].SetPuesto(i);
             fila[i].CaminarA(PosicionPuesto(i), EscalaPuesto(i));
         }
+    }
+
+    /// <summary>Sonido según cómo se va el cliente: feliz, normal (serio) o enojado.</summary>
+    void SonarDespedida(Customer c)
+    {
+        if (audioSource == null) return;
+
+        AudioClip clip = c.AnimoActual switch
+        {
+            Mood.Happy => sonidoSeVaFeliz,
+            Mood.Serious => sonidoSeVaNormal,
+            _ => sonidoSeVaEnojado
+        };
+        if (clip != null) audioSource.PlayOneShot(clip);
     }
 
     Vector3 PosicionPuesto(int puesto)
