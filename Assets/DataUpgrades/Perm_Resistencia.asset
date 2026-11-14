@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Resistencia
   icon: {fileID: 0}
   backGround: {fileID: 21300000, guid: 789d9c6c7365907498d29f14c1b584bd, type: 3}
-  effectPerLevel: 0.35
+  effectPerLevel: 0.2
   effectText: "de vida m\xE1xima"
-  priceMultiplier: 0.06
+  priceMultiplier: 0.18
   affectedBy: 1

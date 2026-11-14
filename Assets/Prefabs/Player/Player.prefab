@@ -12490,7 +12490,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  cooldown: 0.5
+  cooldown: 1.5
   iFrameStart: 0.08
   iFrameEnd: 0.8
   attackCancelPoint: 0.5

@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 //Estados del juego 
 public enum GameState
@@ -47,6 +48,7 @@ public class GameManager : MonoBehaviour
     public int CurrentCycle { get; private set; } = 1;
     public RunData Data { get; private set; } = new RunData();
     public EndingType Ending { get; private set; } = EndingType.None;
+    private ShiftManager shiftManager;
 
     private void Awake()
     {
@@ -62,6 +64,7 @@ public class GameManager : MonoBehaviour
     // Llamar desde la tienda cuando el jugador termina el día
     public void StartNight()
     {
+
         if (CurrentState != GameState.Day) return;
 
         // Final 3: terminó el día con estrés y depresión al límite

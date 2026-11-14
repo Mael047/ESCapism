@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -73,6 +74,14 @@ public class ShiftManager : MonoBehaviour
     [Tooltip("Panel que aparece al terminar (empieza oculto).")]
     public GameObject panelResultados;
     public TMP_Text textoResultados;
+
+    [Header("Paso automatico a la noche")]
+    [Tooltip("Despues de mostrar los resultados, pasa sola a la noche")]
+    public bool pasarALaNocheSolo = true;
+    [Tooltip("Segundos con los resultados en pantalla antes de pasar a la noche")]
+    public float segundosAntesDeLaNoche = 10f;
+    [Tooltip("Opcional: texto que muestra la cuenta regresiva (ej. 'La noche empieza en 10')")]
+    public TMP_Text textoCuentaRegresiva;
 
     [Header("Sonido de tiempo por terminar")]
     [Tooltip("Suena una vez cuando el timer se pone rojo (en los últimos 'Segundos Aviso').")]
@@ -228,11 +237,36 @@ public class ShiftManager : MonoBehaviour
 
         MostrarResultados(r);
         OnJornadaTerminada?.Invoke(r);
+
+        if (pasarALaNocheSolo) rutinaNoche = StartCoroutine(PasarALaNoche());
+    }
+
+    Coroutine rutinaNoche;
+
+    // Espera unos segundos con los resultados y pasa a la noche.
+    // Usa el tiempo del juego: si se abre la pausa, la cuenta se detiene.
+    IEnumerator PasarALaNoche()
+    {
+        float restante = segundosAntesDeLaNoche;
+        while (restante > 0f)
+        {
+            if (textoCuentaRegresiva != null)
+                textoCuentaRegresiva.text = $"La noche empieza en {Mathf.CeilToInt(restante)}";
+            restante -= Time.deltaTime;
+            yield return null;
+        }
+
+        rutinaNoche = null;
+        Continuar();
     }
 
     /// <summary>Para el botón "Continuar" del panel de resultados: pasa a la noche.</summary>
     public void Continuar()
     {
+        // Si el jugador presiona Continuar antes, se cancela la cuenta regresiva
+        if (rutinaNoche != null) { StopCoroutine(rutinaNoche); rutinaNoche = null; }
+        if (textoCuentaRegresiva != null) textoCuentaRegresiva.text = "";
+
         if (GameManager.Instance != null) GameManager.Instance.StartNight();
     }
 
