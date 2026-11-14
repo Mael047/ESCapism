@@ -1385,7 +1385,7 @@ MonoBehaviour:
   lineFadeOut: 0.25
   slowZoom: 1.06
   zoomDuration: 20
-  previewEnding: 3
+  previewEnding: 2
   mainMenuScene: Portada
 --- !u!4 &2110047691
 Transform:

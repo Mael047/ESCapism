@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Agilidad
   icon: {fileID: 0}
   backGround: {fileID: 21300000, guid: b284ceab27da22e4691d7c82b1a64164, type: 3}
-  effectPerLevel: 0.1
+  effectPerLevel: 0.08
   effectText: de velocidad al moverte
-  priceMultiplier: 0.05
+  priceMultiplier: 0.09
   affectedBy: 0

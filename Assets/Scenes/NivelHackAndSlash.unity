@@ -224,7 +224,7 @@ MonoBehaviour:
   restartDelay: 2
   playerRespawnPoint: {fileID: 0}
   tutorial: {fileID: 1235843126}
-  showDebug: 1
+  showDebug: 0
 --- !u!4 &497842883
 Transform:
   m_ObjectHideFlags: 0
