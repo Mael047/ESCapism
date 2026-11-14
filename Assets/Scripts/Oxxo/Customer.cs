@@ -50,6 +50,13 @@ public class Customer : MonoBehaviour
     /// <summary>Cuántos productos trae (lo decide CustomerManager al crearlo).</summary>
     public int CantidadProductos { get; set; }
 
+    /// <summary>Cómo se siente ahora: la cara del NPC, o según su paciencia si no tiene NPCAppearance.</summary>
+    public Mood AnimoActual =>
+        apariencia != null ? apariencia.CurrentMood
+        : Paciencia01 <= umbralEnojado ? Mood.Angry
+        : Paciencia01 <= umbralSerio ? Mood.Serious
+        : Mood.Happy;
+
     public float PacienciaMax { get; private set; }
     public float Paciencia { get; private set; }
     public float Paciencia01 => PacienciaMax > 0f ? Paciencia / PacienciaMax : 0f;
